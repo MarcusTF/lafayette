@@ -1,0 +1,78 @@
+.login {
+  animation: fadeIn 0.5s ease-in-out;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  grid-template-rows: 1fr auto;
+  padding-top: 30px;
+  border-radius: 20px;
+  width: 100%;
+
+  &__header {
+    max-width: 400px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__main {
+    width: 100%;
+    background-color: #7c6136;
+    color: #fff;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
+    gap: 1rem;
+    border-radius: 1rem 1rem 0 0;
+    padding: 2rem 1rem 3rem 1rem;
+  }
+
+  .btn--slack {
+    align-items: center;
+    background-color: #fff;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    color: #000;
+    display: flex;
+    font-family: Lato, sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    height: 56px;
+    justify-content: center;
+    transition: all 0.2s ease-in-out;
+    width: 296px;
+    &:hover {
+      cursor: pointer;
+      transform: translateY(-0.25rem);
+      box-shadow: 0 0.25rem 0.25rem rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  .slack-icon {
+    height: 24px;
+    width: 24px;
+    margin-right: 12px;
+  }
+
+  .fluffybutt {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+  }
+
+  .header-image-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    gap: 1rem;
+    h1 {
+      margin: 0;
+    }
+  }
+}

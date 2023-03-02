@@ -1,0 +1,27 @@
+{
+  "name": "slack_bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start:client": "npm run --prefix ./client start",
+    "start:server": "npm run --prefix ./server start",
+    "dev": "concurrently \"npm run start:client\" \"npm run start:server\"",
+    "build:client": "npm run --prefix ./client build",
+    "build:client-dev": "npm run --prefix ./client build:dev",
+    "serve:server": "npm run --prefix ./server deploy",
+    "serve": "npm run build:client && npm run serve:server",
+    "preview": "npm run build:client-dev && npm run start:server",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^7.6.0",
+    "react-modal": "^3.16.1"
+  },
+  "devDependencies": {
+    "@types/node": "^18.14.2",
+    "@types/react-modal": "^3.13.1"
+  }
+}

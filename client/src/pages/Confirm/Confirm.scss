@@ -1,0 +1,161 @@
+.confirm {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+  margin: 0;
+  padding: 1rem;
+  width: 100%;
+  * {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+  .lafayette {
+    align-items: center;
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    max-width: 400px;
+    width: 100%;
+    .fluffybutt {
+      border-radius: 50%;
+      height: 70px;
+      width: 70px;
+    }
+    &__text {
+      text-align: left;
+    }
+  }
+}
+.card {
+  &--found,
+  &--slack {
+    border-radius: 15px;
+    box-shadow: 3px 3px 10px #00000040;
+    margin-top: 2rem;
+    max-width: 375px;
+    padding: 1rem 2rem;
+    width: calc(100% - 2rem);
+  }
+  .id {
+    color: #c1c1c1;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    font-weight: 400;
+    &--shortcut {
+      padding-bottom: 0.5rem;
+    }
+    &--slack {
+      padding-top: 0.5rem;
+    }
+  }
+  &__avatar {
+    border-radius: 10px;
+    height: 60px;
+    width: 60px;
+  }
+  &__logos {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    justify-content: center;
+    .haneke-logo {
+      height: 60px;
+      width: 60px;
+    }
+    .shortcut-logo {
+      height: 50px;
+      width: 50px;
+    }
+    .slack-logo {
+      height: 40px;
+      width: 40px;
+    }
+  }
+  &__info {
+    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    justify-content: center;
+    padding: 1rem 0;
+    .info {
+      &__item {
+        align-items: start;
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+        text-align: left;
+        .label {
+          font-size: 14px;
+          font-weight: 600;
+        }
+        .value {
+          font-size: 16px;
+          font-weight: 400;
+        }
+      }
+    }
+  }
+  &__actions {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1rem;
+    padding-bottom: 1rem;
+    .actions__button {
+      border-radius: 10px;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 500;
+      height: 40px;
+      width: 140px;
+      &--confirm {
+        background-color: #177743;
+      }
+      &--wrong {
+        background-color: #8d2828;
+      }
+    }
+  }
+}
+.page-actions {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  justify-content: center;
+  padding: 2rem;
+  .button {
+    border-radius: 10px;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+    height: 40px;
+    width: 140px;
+    &--confirm {
+      background-color: #177743;
+    }
+    &--wrong {
+      background-color: #8d2828;
+    }
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

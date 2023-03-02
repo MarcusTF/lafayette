@@ -1,0 +1,8 @@
+export { default as HanekeIcon } from "assets/haneke.png"
+export { default as Lafayette } from "assets/lafayette.png"
+export { default as LoadAnimation } from "assets/load.gif"
+export { default as ShortcutIcon } from "assets/shortcut.svg"
+export { default as SlackIcon } from "assets/slack.svg"
+export { default as PuppyError } from "assets/error.gif"
+export { default as PuppyWag } from "assets/wag.gif"
+export { default as PuppySleep } from "assets/sleep.gif"
