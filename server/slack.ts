@@ -1,4 +1,4 @@
-import { slack } from "./services"
+import { slack, supabase } from "./services"
 
 slack.message(
   /(?:good){0,1} {0,1}(?:boy|girl|dog|pup|puppers{0,1}|puppy|laf{1,2}ie|laf{1,2}y|lafayette|fluffybutt|doggy|doggie|fluffael)/i,
