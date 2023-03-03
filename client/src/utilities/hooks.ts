@@ -24,7 +24,7 @@ export const useGetShortcutIds = (options?: UseQueryOptions<ShortcutResponse>) =
   const token = user?.auth?.access_token
   const getShortcutIds = async () =>
     (
-      await axios.get<ShortcutResponse>(import.meta.API_URL || "http://localhost:3000/api" + "/shortcut", {
+      await axios.get<ShortcutResponse>(import.meta.env.API_URL || "http://localhost:3000/api" + "/shortcut", {
         headers: {
           "Content-Type": "application/json",
           Authorization: token,
