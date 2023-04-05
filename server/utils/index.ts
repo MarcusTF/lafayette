@@ -1,5 +1,17 @@
 import axios from "axios"
 
+import {
+  Database,
+  Mention,
+  ShortcutMember,
+  ShortcutWebhookBody,
+  SlackIdentityData,
+  SupabaseDatabase,
+  WorkspaceRes,
+} from "types"
+import { User } from "@supabase/supabase-js"
+import { Workspace } from "routes/api/webhook/shortcut/webhook.shortcut.controller.types"
+
 const quips = [
   "Treat Please! 🦴",
   "I think it's time for belly rubs, you're not busy, right? 🐾",
@@ -14,34 +26,4 @@ const quips = [
 
 export function getQuip() {
   return quips[Math.floor(Math.random() * quips.length)]
-}
-
-class Members {
-  private members = [] as { [k: string]: any }[]
-  get() {
-    return this.members
-  }
-  set(members: { [k: string]: any }[]) {
-    this.members = members
-  }
-}
-
-export const members = new Members()
-
-export const fetchMembers = async () => {
-  try {
-    members.set(
-      (
-        await axios.get("https://api.app.shortcut.com/api/v3/members", {
-          headers: {
-            "Content-Type": "application/json",
-            "Shortcut-Token": process.env.SHORTCUT_TOKEN,
-          },
-        })
-      )?.data
-    )
-    console.log("Fetched Shortcut members")
-  } catch (error) {
-    console.error(error)
-  }
 }

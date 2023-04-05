@@ -1,5 +1,5 @@
 import { CorsOptions } from "cors"
-import { stringNumber } from "./types"
+import { stringNumber } from "types"
 
 export const port = stringNumber(process.env.PORT) || 3000
 export const port2 = stringNumber(process.env.PORT2) || 3001

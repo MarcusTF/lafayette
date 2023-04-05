@@ -1,0 +1,26 @@
+{
+  "id": "e2bba525-8ecd-46f0-b39a-0746c61affd3",
+  "aud": "authenticated",
+  "role": "authenticated",
+  "email": "mfernandez@hanekedesign.com",
+  "email_confirmed_at": "2023-02-24T17:36:22.674875Z",
+  "phone": "",
+  "confirmed_at": "2023-02-24T17:36:22.674875Z",
+  "last_sign_in_at": "2023-03-07T14:12:20.559532Z",
+  "app_metadata": { "provider": "slack", "providers": ["slack"] },
+  "user_metadata": {
+    "avatar_url": "https://avatars.slack-edge.com/2021-06-10/2164646726292_6b970f73c6f461b951d7_512.jpg",
+    "custom_claims": { "https://slack.com/team_id": "T02G93X17" },
+    "email": "mfernandez@hanekedesign.com",
+    "email_verified": true,
+    "full_name": "Marcus Fernandez",
+    "iss": "https://slack.com/api",
+    "name": "Marcus Fernandez",
+    "picture": "https://avatars.slack-edge.com/2021-06-10/2164646726292_6b970f73c6f461b951d7_512.jpg",
+    "provider_id": "U025C85LM6U",
+    "sub": "U025C85LM6U"
+  },
+  "identities": null,
+  "created_at": "2023-02-24T17:36:22.659317Z",
+  "updated_at": "2023-03-07T16:51:51.266696Z"
+}
