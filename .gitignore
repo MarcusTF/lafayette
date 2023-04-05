@@ -11,6 +11,9 @@ node_modules
 dist
 dist-ssr
 *.local
+dockerfile
+dockercompose.yml
+.dockerignore
 
 # Editor directories and files
 .vscode/*

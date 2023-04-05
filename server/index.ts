@@ -1,9 +1,8 @@
-import { config as dotenv } from "dotenv"
 import cors from "cors"
 import express from "express"
 import path from "path"
 
-if (process.env.NODE_ENV !== "production") dotenv({ path: path.join(__dirname, "..", "..", ".env") })
+if (process.env.NODE_ENV !== "production") require("dotenv").config({ path: path.join(__dirname, "..", "..", ".env") })
 
 import { corsOptions, port } from "./constants"
 import { serveView } from "./routes/view/view"
