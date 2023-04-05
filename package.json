@@ -11,17 +11,18 @@
     "build:client-dev": "npm run --prefix ./client build:dev",
     "serve:server": "npm run --prefix ./server deploy",
     "serve": "npm run build:client && npm run serve:server",
+    "ngrok": "npm run --prefix ./server ngrok",
     "preview": "npm run build:client-dev && npm run start:server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "concurrently": "^7.6.0",
+    "concurrently": "^8.0.1",
     "react-modal": "^3.16.1"
   },
   "devDependencies": {
-    "@types/node": "^18.14.2",
+    "@types/node": "^18.15.11",
     "@types/react-modal": "^3.13.1"
   }
 }

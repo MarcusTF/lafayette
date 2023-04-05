@@ -1,35 +1,28 @@
+import { config as dotenv } from "dotenv"
 import cors from "cors"
 import express from "express"
 import path from "path"
 
-import { corsOptions, port, port2 } from "./constants"
-import { fetchMembers, members } from "./utils"
-import { server, slack } from "./services"
-import router from "./routes/routes"
+if (process.env.NODE_ENV !== "production") dotenv({ path: path.join(__dirname, "..", "..", ".env") })
 
-fetchMembers()
+import { corsOptions, port } from "./constants"
+import { serveView } from "./routes/view/view"
+import routes from "./routes/api/api.routes"
+import { updateShortcutUsers } from "services/shortcut.service"
+import morgan from "morgan"
 
-setInterval(
-  async () => {
-    await fetchMembers()
-    console.log("Fetched Shortcut members")
-  },
-  1000 * 60 * 5,
-  members
-)
+updateShortcutUsers()
+
+export const server = express()
 
 server
   .use(express.json())
   .use(express.static(path.join(__dirname, "public")))
   .use(cors(corsOptions))
-  .use("/api", router)
-  .use(async (req, res, next) => {
-    res.sendFile(path.join(__dirname, "/public/index.html"))
-  })
+  .use(morgan("dev"))
+  .use(...routes)
+  .use(serveView)
   .listen(port, () => {
     console.log("Server is running on port " + port + "!")
+    console.log(...routes.map(route => route.toString()))
   })
-
-slack.start(port2 || port + 1).then(() => {
-  console.log("⚡️ Bolt app is running on port " + (port2 || port + 1) + "!")
-})

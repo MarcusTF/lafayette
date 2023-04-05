@@ -1,4 +1,89 @@
-import { slack, supabase } from "./services"
+import { App } from "@slack/bolt"
+
+import { Mention } from "types"
+import { getQuip } from "utils"
+import { port, port2 } from "../constants"
+import supabase from "./supabase.service"
+import capitalize from "lodash/capitalize"
+
+if (!process.env.SLACK_APP_TOKEN) throw new Error("Missing SLACK_APP_TOKEN")
+if (!process.env.SLACK_BOT_TOKEN) throw new Error("Missing SLACK_BOT_TOKEN")
+
+const slack = new App({
+  socketMode: true,
+  token: process.env.SLACK_BOT_TOKEN,
+  signingSecret: process.env.SLACK_SIGNING_SECRET,
+  appToken: process.env.SLACK_APP_TOKEN,
+})
+
+export async function notifySlackUser(mention: Mention, channelId: string) {
+  return await slack.client.chat.postMessage({
+    username: `Lafayette`,
+    blocks: [
+      {
+        type: "divider",
+      },
+      {
+        type: "context",
+        elements: [
+          {
+            type: "image",
+            image_url: "https://pbs.twimg.com/profile_images/1423353258127462403/b3H7GdwV_400x400.png",
+            alt_text: "Shortcut",
+          },
+          {
+            type: "mrkdwn",
+            text: `*${mention.author}* mentioned you in a <${mention.appUrl}|Shortcut comment>${
+              mention.workspace.name ? ` in the *"${capitalize(mention.workspace.name)}"* workspace` : ""
+            }.`,
+          },
+        ],
+      },
+      {
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: `${mention.text?.[2990] ? mention.text?.slice(0, 2900) + "..." : mention.text}`,
+        },
+      },
+      {
+        type: "actions",
+        elements: [
+          {
+            type: "button",
+            text: {
+              type: "plain_text",
+              text: `View ${mention.text?.[2990] ? "the rest " : ""}in Shortcut`,
+            },
+            style: "primary",
+            url: `${mention.appUrl}`,
+          },
+        ],
+      },
+      {
+        type: "divider",
+      },
+      {
+        type: "context",
+        elements: [
+          {
+            type: "image",
+            image_url: "https://i.imgur.com/60YsZdC.png",
+            alt_text: "Lafayette",
+          },
+          {
+            type: "mrkdwn",
+            text: getQuip(),
+          },
+        ],
+      },
+    ],
+    mrkdwn: true,
+    text: `${mention.text}`,
+    icon_url: "https://i.imgur.com/60YsZdC.png",
+    channel: channelId,
+  })
+}
 
 slack.message(
   /(?:good){0,1} {0,1}(?:boy|girl|dog|pup|puppers{0,1}|puppy|laf{1,2}ie|laf{1,2}y|lafayette|fluffybutt|doggy|doggie|fluffael)/i,
@@ -103,7 +188,14 @@ slack.event("app_home_opened", async ({ event, client, logger }) => {
       },
     })
     logger.info("Published home tab for user: ", user)
+    slack.stop()
   } catch (error) {
     logger.error(error)
   }
 })
+
+slack.start(port2 || port + 1).then(() => {
+  console.log("⚡️ Bolt app is running on port " + (port2 || port + 1) + "!")
+})
+
+export default slack
