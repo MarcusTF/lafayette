@@ -9,8 +9,10 @@
     "dev": "concurrently \"npm run start:client\" \"npm run start:server\"",
     "build:client": "npm run --prefix ./client build",
     "build:client-dev": "npm run --prefix ./client build:dev",
+    "build:server": "npm run --prefix ./server build",
     "serve:server": "npm run --prefix ./server deploy",
     "serve": "npm run build:client && npm run serve:server",
+    "build": "npm run build:client && npm run build:server",
     "ngrok": "npm run --prefix ./server ngrok",
     "preview": "npm run build:client-dev && npm run start:server",
     "test": "echo \"Error: no test specified\" && exit 1"

@@ -9,6 +9,7 @@
     "tsa:watch": "tsc-alias --watch",
     "ts:watch": "concurrently \"npm run tsc:watch\" \"npm run tsa:watch\"",
     "node:watch": "nodemon dist/index.js",
+    "build": "tsc && tsc-alias",
     "start": " tsc && tsc-alias && concurrently \"npm run ts:watch\" \"npm run node:watch\"",
     "ngrok": "ngrok http 4739",
     "deploy": "tsc && tsc-alias && node dist/index.js"
