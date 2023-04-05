@@ -104,9 +104,9 @@ interface Reference {
   name: string
 }
 
-interface Action {
+export interface Action<T extends string | "story-comment" = string> {
   id: number
-  entity_type: string
+  entity_type: T
   action: string
   name?: string
   mention_ids?: string[]
@@ -140,7 +140,7 @@ interface Started {
 export const stringNumber = (value: unknown): number | undefined => {
   if (value === undefined) return undefined
   const number = Number(value)
-  if (isNaN(number)) return undefined
+  if (Number.isNaN(number)) return undefined
   return number
 }
 

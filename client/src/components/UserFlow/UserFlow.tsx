@@ -21,8 +21,6 @@ const flowSwitch = (route: DashboardTypes.UserFlowRoutes) => {
       return <NotFound />
     case "wrongGuess":
       return <WrongGuess />
-    case "notFound":
-      return <NotFound />
     case "error":
       return <Error />
     default:
