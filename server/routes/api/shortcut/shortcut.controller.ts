@@ -8,7 +8,7 @@ const get: RequestHandler = async (req, res) => {
     const { data, error } = await supabase.auth.getUser(req.headers.authorization)
     const { user } = data
     if (!user) return void res.status(401).send("Unauthorized")
-    if (error) return void res.status(error?.status || 401).send(error?.message || "Unauthorized")
+    if (error) return void res.status(error?.status || 401).json(error?.message || "Unauthorized")
 
     const { data: workspaceData, error: workspaceError } = await supabase
       .from("shortcut_workspaces")

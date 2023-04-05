@@ -1,5 +1,29 @@
-import type { WorkspaceRes, ShortcutWebhookBody, ShortcutMember, WRSlackUser, WRShortcutUser } from "types"
-import { Describe, array, boolean, nullable, number, object, optional, string, union, assert, type } from "superstruct"
+import type {
+  WorkspaceRes,
+  ShortcutWebhookBody,
+  ShortcutMember,
+  WRSlackUser,
+  WRShortcutUser,
+  Mention,
+  Action,
+} from "types"
+import {
+  Describe,
+  array,
+  boolean,
+  nullable,
+  number,
+  object,
+  optional,
+  string,
+  union,
+  assert,
+  type,
+  literal,
+  refine,
+  is,
+  intersection,
+} from "superstruct"
 
 const SlackUserStruct: Describe<WRSlackUser> = nullable(
   object({
@@ -9,15 +33,13 @@ const SlackUserStruct: Describe<WRSlackUser> = nullable(
   })
 )
 
-const ShortcutUserStruct: Describe<WRShortcutUser> = nullable(
-  array(
-    object({
-      id: string(),
-      user: nullable(string()),
-      slack_user: SlackUserStruct,
-    })
-  )
-)
+const ShortcutUserStructSingle: Describe<NonNullable<WRShortcutUser>[0]> = object({
+  id: string(),
+  user: nullable(string()),
+  slack_user: SlackUserStruct,
+})
+
+const ShortcutUserStruct: Describe<WRShortcutUser> = nullable(array(ShortcutUserStructSingle))
 
 export const WorkspaceResStruct: Describe<WorkspaceRes[]> = array(
   object({
@@ -48,9 +70,21 @@ export const ChangesStruct = type({
   text: optional(string()),
 })
 
-export const ActionStruct = type({
+export const ActionStruct: Describe<Action> = type({
   id: number(),
   entity_type: string(),
+  action: string(),
+  name: optional(string()),
+  mention_ids: optional(array(string())),
+  changes: optional(ChangesStruct),
+  author_id: optional(string()),
+  app_url: optional(string()),
+  text: optional(string()),
+})
+
+export const StoryActionStruct: Describe<Action<"story-comment">> = type({
+  id: number(),
+  entity_type: literal("story-comment"),
   action: string(),
   name: optional(string()),
   mention_ids: optional(array(string())),
@@ -113,3 +147,18 @@ export const ShortcutMemberStruct = object({
 
 export const isShortcutMember = (data: unknown): data is ShortcutMember => ShortcutMemberStruct.is(data)
 export const isShortcutMemberArray = (data: unknown): data is ShortcutMember[] => array(ShortcutMemberStruct).is(data)
+
+export const MentionStruct: Describe<Mention> = object({
+  id: string(),
+  name: string(),
+  text: string(),
+  appUrl: string(),
+  authorId: string(),
+  workspace: object({
+    id: string(),
+    name: string(),
+  }),
+  slackUser: SlackUserStruct,
+  shortcutUser: ShortcutUserStructSingle,
+  author: string(),
+})

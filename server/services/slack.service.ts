@@ -194,8 +194,13 @@ slack.event("app_home_opened", async ({ event, client, logger }) => {
   }
 })
 
-slack.start(port2 || port + 1).then(() => {
-  console.log("⚡️ Bolt app is running on port " + (port2 || port + 1) + "!")
-})
+slack
+  .start(port2 || port + 1)
+  .then(() => {
+    console.log("⚡️ Bolt app is running on port " + (port2 || port + 1) + "!")
+  })
+  .catch(error => {
+    console.error(error)
+  })
 
 export default slack
