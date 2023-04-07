@@ -1,14 +1,33 @@
-import { fetchShortcutMembers } from "services/shortcut.service"
+import { fetchShortcutMembers, updateShortcutUsers } from "services/shortcut.service"
 import { RequestHandler } from "express"
 import supabase from "services/supabase.service"
+
+const post: RequestHandler = async (req, res) => {
+  if (!req.headers.authorization) return void res.status(401).send("Unauthorized")
+  try {
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser(req.headers.authorization)
+    if (!user) return void res.status(401).send("Unauthorized")
+    if (userError) return void res.status(userError?.status || 401).json(userError?.message || "Unauthorized")
+
+    updateShortcutUsers()
+  } catch (error) {
+    console.log(error)
+    res.status(500).send("Internal Server Error")
+  }
+}
 
 const get: RequestHandler = async (req, res) => {
   if (!req.headers.authorization) return void res.status(401).send("Unauthorized")
   try {
-    const { data, error } = await supabase.auth.getUser(req.headers.authorization)
-    const { user } = data
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser(req.headers.authorization)
     if (!user) return void res.status(401).send("Unauthorized")
-    if (error) return void res.status(error?.status || 401).send(error?.message || "Unauthorized")
+    if (userError) return void res.status(userError?.status || 401).json(userError?.message || "Unauthorized")
 
     const { data: workspaceData, error: workspaceError } = await supabase
       .from("shortcut_workspaces")
@@ -23,8 +42,12 @@ const get: RequestHandler = async (req, res) => {
         const { data: members } = await fetchShortcutMembers(token)
 
         return {
+          workspace: {
+            id: workspace.id,
+            name: workspace.name,
+          },
           bestGuess: members.find(member => member.profile.email_address === user.email) || null,
-          members,
+          members: members.filter(member => member.profile.email_address),
         }
       })
     )

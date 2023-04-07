@@ -1,5 +1,5 @@
 import { FC, PropsWithChildren, useContext } from "react"
-import { Context } from "../context"
+import { Context } from "../context/context"
 import { Outlet, Navigate } from "react-router-dom"
 
 type Props = {

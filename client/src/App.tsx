@@ -1,5 +1,7 @@
 import { Route, Routes } from "react-router-dom"
 import Modal from "react-modal"
+import { ToastContainer } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
 
 import Dashboard from "./pages/Dashboard/Dashboard"
 import Login from "./pages/Login/Login"
@@ -24,6 +26,7 @@ function App() {
           <Route path='' element={<Dashboard />} />
         </Route>
       </Routes>
+      <ToastContainer />
     </div>
   )
 }

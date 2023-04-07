@@ -2,10 +2,10 @@ import { Dispatch, FC, PropsWithChildren, SetStateAction, createContext, useStat
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { createClient } from "@supabase/supabase-js"
-import { AppUser } from "./utilities/utils"
-import { Database } from "./supabase"
-
-type MainContext = { user: AppUser | null; setUser: Dispatch<SetStateAction<AppUser | null>> }
+import { AppUser } from "../utilities/utils"
+import { Database } from "../supabase"
+import { MainContext } from "./context.types"
+import { ShortcutMember } from "utilities/types"
 
 export const supabase = createClient<Database>(
   import.meta.env.VITE_SUPABASE_URL,
@@ -16,9 +16,10 @@ export const Context = createContext<MainContext>({} as any)
 
 const ContextProvider: FC<PropsWithChildren> = ({ children }) => {
   const [user, setUser] = useState<AppUser | null>(null)
+  const [selectedShortcut, setSelectedShortcut] = useState<ShortcutMember[] | null>(null)
   return (
     <QueryClientProvider client={queryClient}>
-      <Context.Provider value={{ user, setUser }}>{children}</Context.Provider>
+      <Context.Provider value={{ user, setUser, selectedShortcut, setSelectedShortcut }}>{children}</Context.Provider>
     </QueryClientProvider>
   )
 }

@@ -1,12 +1,16 @@
 import { useContexts, useSetupSync } from "utilities/hooks"
 
+import ReactModal from "react-modal"
 import { HanekeIcon, ShortcutIcon, SlackIcon, Lafayette } from "assets"
 import "./Confirm.scss"
+import { useState } from "react"
+import capitalize from "lodash.capitalize"
 
 const Confirm = () => {
-  const { shortcut, setRoute, setLoading, user } = useContexts()
+  const [isOpen, setIsOpen] = useState(false)
+  const { shortcut, setRoute, setLoading, user, selectedShortcut } = useContexts()
 
-  const { mutate } = useSetupSync({
+  const { mutate: setupSync } = useSetupSync({
     onMutate: () => {
       setLoading(true)
     },
@@ -19,15 +23,17 @@ const Confirm = () => {
     },
   })
 
-  const handleConfirm = () => {
-    if (shortcut?.data?.bestGuess?.id && user?.identities?.[0]?.id && user?.id)
-      mutate({
-        shortcutId: shortcut?.data?.bestGuess?.id,
-        slackId: user?.identities?.[0]?.id,
-        userId: user?.id,
-      })
-    else console.error(shortcut?.data?.bestGuess?.id, user?.identities?.[0]?.id, user?.id)
+  const bestGuesses = {
+    slackId: user?.identities?.[0]?.id,
+    shortcutIds: selectedShortcut
+      ? selectedShortcut?.map(ss => ss.id)
+      : shortcut?.data?.map(({ bestGuess }) => bestGuess?.id),
+    id: user?.id,
   }
+
+  const handleConfirm = () => setupSync(bestGuesses)
+
+  const openInfoModal = () => setIsOpen(v => !v)
 
   return (
     <div className='confirm'>
@@ -39,7 +45,14 @@ const Confirm = () => {
         </p>
       </div>
       <div className='card card--found'>
-        <p className='id id--shortcut'>{shortcut?.data?.bestGuess?.id}</p>
+        <button onClick={openInfoModal} className='id id--shortcut'>
+          {shortcut?.data?.map(({ bestGuess }) => (
+            <>
+              <span className='id'>{bestGuess?.id}</span>
+              <br />
+            </>
+          ))}
+        </button>
         <div className='card__logos'>
           <img src={HanekeIcon} alt='' className='haneke-logo' />
           <img src={ShortcutIcon} alt='' className='shortcut-logo' />
@@ -47,15 +60,15 @@ const Confirm = () => {
         <div className='card__info'>
           <div className='info__item info__item--name'>
             <p className='label label--name'>Name</p>
-            <p className='value value--name'>{shortcut?.data?.bestGuess?.name}</p>
+            <p className='value value--name'>{shortcut?.data?.[0]?.bestGuess?.profile.name}</p>
           </div>
           <div className='info__item info__item--email'>
             <p className='label label--email'>Email</p>
-            <p className='value value--email'>{shortcut?.data?.bestGuess?.email}</p>
+            <p className='value value--email'>{shortcut?.data?.[0]?.bestGuess?.profile.email_address}</p>
           </div>
           <div className='info__item info__item--mention-name'>
             <p className='label label--mention-name'>Mention Name</p>
-            <p className='value value--mention-name'>@{shortcut?.data?.bestGuess?.mentionName}</p>
+            <p className='value value--mention-name'>@{shortcut?.data?.[0]?.bestGuess?.profile.mention_name}</p>
           </div>
         </div>
       </div>
@@ -87,6 +100,30 @@ const Confirm = () => {
           Wait...
         </button>
       </div>
+      <ReactModal
+        onRequestClose={() => setIsOpen(v => !v)}
+        isOpen={isOpen}
+        className='modal modal--confirm'
+        overlayClassName='modal__overlay modal__overlay--confirm'
+      >
+        <h1 className='modal__title'>What is this?</h1>
+        <p className='modal__subtitle'>These are the shortcut user ids that will be connected to this slack user.</p>
+        <ul>
+          {shortcut?.data?.map(({ workspace, bestGuess }, i) => {
+            return (
+              <li className='info__item' key={i}>
+                <p className='label'>{capitalize(workspace.name)}:</p>
+                <p className='value'>{bestGuess?.id}</p>
+              </li>
+            )
+          })}
+        </ul>
+        <div className='actions'>
+          <button className='button button--undo button--confirm' onClick={() => setIsOpen(v => !v)}>
+            Got it!
+          </button>
+        </div>
+      </ReactModal>
     </div>
   )
 }

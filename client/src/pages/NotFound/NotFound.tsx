@@ -1,11 +1,14 @@
 import { FC, useState } from "react"
 import { UseQueryResult } from "@tanstack/react-query"
+import groupBy from "lodash.groupby"
 
 import { ShortcutMember, ShortcutResponse } from "utilities/types"
 import { useContexts } from "utilities/hooks"
 
 import { Lafayette } from "assets"
 import "./NotFound.scss"
+import capitalize from "lodash.capitalize"
+import { Match } from "./NotFound.types"
 
 type Props = { isBadGuess?: boolean }
 const generateListOptions = (
@@ -13,46 +16,74 @@ const generateListOptions = (
   search: string,
   handleSelect: Function
 ) => {
-  return shortcut?.data?.options?.flatMap?.((option, index, array) => {
-    if (
-      !Object.values?.(option)
-        ?.map(value => {
-          if (!value?.toUpperCase?.()?.includes?.(search?.toUpperCase?.())) return false
-          return true
-        })
-        ?.includes?.(true)
-    )
-      return []
+  return Object.entries(
+    groupBy(
+      shortcut?.data?.flatMap?.(({ workspace, members }) => {
+        const matches = members
+          .filter(member =>
+            Object.values?.(member?.profile)
+              ?.map(value => {
+                if (!value?.toUpperCase?.()?.includes?.(search?.toUpperCase?.())) return false
+                return true
+              })
+              ?.includes?.(true)
+          )
+          .map(member => ({ ...member, workspace }))
 
-    return [
-      <div key={index} className='card card--not-found-list' onClick={() => handleSelect(option)}>
+        if (!matches?.length) return []
+
+        return matches
+      }),
+      match => match.profile.email_address
+    )
+  ).flatMap(([email, matches], index) => {
+    const workspaces = matches?.map?.(({ workspace }) => capitalize(workspace?.name))?.join?.(", ")
+    const names = matches?.every?.(({ profile }) => profile?.name === matches[0]?.profile?.name)
+      ? matches[0]?.profile?.name
+      : matches?.map?.(({ profile }) => profile?.name)?.join?.(", ")
+    const mentionNames = matches?.every?.(({ profile }) => profile?.mention_name === matches[0]?.profile?.mention_name)
+      ? matches[0]?.profile?.mention_name
+      : matches?.map?.(({ profile }) => profile?.mention_name)?.join?.(", ")
+
+    return (
+      <button key={index} className='card card--not-found-list' onClick={() => handleSelect(matches)}>
         <div className='card__info'>
+          <div className='info__item info__item--workspace'>
+            <p className='label label--workspace'>Workspaces</p>
+            <p className='value value--workspace'>{workspaces}</p>
+          </div>
           <div className='info__item info__item--name'>
-            <p className='label label--name'>Name</p>
-            <p className='value value--name'>{option?.name}</p>
+            <p className='label label--name'>Names</p>
+            <p className='value value--name'>{names}</p>
           </div>
           <div className='info__item info__item--email'>
             <p className='label label--email'>Email</p>
-            <p className='value value--email'>{option?.email}</p>
+            <p className='value value--email'>{email}</p>
           </div>
           <div className='info__item info__item--mention-name'>
-            <p className='label label--mention-name'>Mention Name</p>
-            <p className='value value--mention-name'>@{option?.mentionName}</p>
+            <p className='label label--mention-name'>Mention Names</p>
+            <p className='value value--mention-name'>{mentionNames}</p>
           </div>
         </div>
-      </div>,
-    ]
+      </button>
+    )
   })
 }
 
 const NotFound: FC<Props> = ({ isBadGuess }) => {
-  const { shortcut, user, setRoute } = useContexts()
+  const { shortcut, user, setRoute, setSelectedShortcut } = useContexts()
   const [search, setSearch] = useState<string>(user?.email || "")
-  const handleSelect = (member: ShortcutMember) => {
-    if (member && shortcut && shortcut.data) {
-      shortcut.data.bestGuess = member
-      setRoute("found")
-    }
+  const handleSelect = (matches: Match[]) => {
+    setSelectedShortcut(
+      matches.map(match => ({
+        id: match?.id,
+        workspace: match?.workspace?.name,
+        name: match?.profile?.name,
+        email: match?.profile?.email_address,
+        mentionName: match?.profile?.mention_name,
+      }))
+    )
+    setRoute("found")
   }
 
   const listOptions = generateListOptions(shortcut, search, handleSelect)

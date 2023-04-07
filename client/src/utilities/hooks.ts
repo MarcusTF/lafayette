@@ -3,7 +3,7 @@ import axios from "axios"
 import { MutationFunction, UseMutationOptions, UseQueryOptions, useMutation, useQuery } from "@tanstack/react-query"
 import { PostgrestError } from "@supabase/supabase-js"
 
-import { Context, supabase } from "context"
+import { Context, supabase } from "context/context"
 import { UserFlowContext } from "pages"
 import { SetupSyncMutation, SetupSyncVariables } from "pages/Confirm/Confirm.types"
 import { AppUser, parseSession } from "./utils"
@@ -88,21 +88,24 @@ export const useUndoSync = (options?: UseMutationOptions) => {
   })
 }
 
-export const useSetupSync = (options: UseMutationOptions<null, PostgrestError, SetupSyncVariables>) => {
-  const setupSync: SetupSyncMutation = async ({ shortcutId, slackId, userId }) => {
-    const { error } = await supabase.from("slack_user").upsert([{ id: slackId, user: userId }])
-    if (error) throw error
-    const { error: error2 } = await supabase
-      .from("shortcut_user")
-      .upsert([{ id: shortcutId, slack_id: slackId, user: userId }])
-    if (error2) throw error2
-    const { error: error3 } = await supabase.from("slack_user").upsert([{ id: slackId, active: true }], {})
-    if (error3) throw error3
-    return null
+export const useSetupSync = (options: UseMutationOptions<void, PostgrestError, SetupSyncVariables>) => {
+  const setupSync: SetupSyncMutation = async user => {
+    try {
+      const shortcut_users = user.shortcutIds?.flatMap(id =>
+        id && user.id ? [{ id, user: user.id, slack_id: user.slackId }] : []
+      )
+      if (!user.slackId || !user.id || !shortcut_users)
+        throw new Error("Every user must have a slack id and a user id and at least one shortcut id")
+      await upsertSlack(user)
+      await upsertShortcutUsers(shortcut_users)
+      await activateUser(user)
+    } catch (e) {
+      throw e
+    }
   }
   return useMutation({
-    mutationFn: setupSync,
     ...options,
+    mutationFn: setupSync,
   })
 }
 
@@ -114,4 +117,18 @@ export const useContexts = () => {
   const mainContext = useContext(Context)
   const userFlowContext = useContext(UserFlowContext)
   return { ...mainContext, ...userFlowContext }
+}
+async function activateUser(user: SetupSyncVariables) {
+  const { error: error3 } = await supabase.from("slack_user").upsert({ id: user.slackId, active: true })
+  if (error3) throw error3
+}
+
+async function upsertShortcutUsers(shortcut_users: { id: string; user: string; slack_id: string | undefined }[]) {
+  const { error: error2 } = await supabase.from("shortcut_user").upsert(shortcut_users)
+  if (error2) throw error2
+}
+
+async function upsertSlack(user: SetupSyncVariables) {
+  const { error } = await supabase.from("slack_user").upsert({ user: user.id, id: user.slackId }, { onConflict: "id" })
+  if (error) throw error
 }

@@ -21,7 +21,9 @@ server
   .use(cors(corsOptions))
   .use(morgan("dev"))
   .use(...routes)
-  .use(serveView)
+  .use("/assets", express.static(path.join(__dirname, "public", "assets"), { index: false }))
+  .use("/favicon.svg", express.static(path.join(__dirname, "public", "favicon.svg"), { index: false }))
+  .use("/*", express.static(path.join(__dirname, "public")))
   .listen(port, () => {
     console.log("Server is running on port " + port + "!")
     console.log(...routes.map(route => route.toString()))

@@ -13,3 +13,12 @@ export const corsOptions: CorsOptions = {
   ],
   optionsSuccessStatus: 200,
 }
+
+export const rateLimitOptions: Partial<RLOptions> = {
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+}
+
+export const helmetOptions = {
+  xssFilter: true,
+} as HelmetOptions
