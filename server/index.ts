@@ -24,6 +24,7 @@ server
   .use(morgan("dev"))
   .use(...routes)
   .use("/assets", express.static(path.join(__dirname, "public", "assets"), { index: false }))
+  .use("/favicon.svg", express.static(path.join(__dirname, "public", "favicon.svg"), { index: false }))
   .use("/*", express.static(path.join(__dirname, "public"), { index: "index.html" }))
   .listen(port, () => {
     console.log("Server is running on port " + port + "!")

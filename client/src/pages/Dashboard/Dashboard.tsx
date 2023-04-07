@@ -7,9 +7,11 @@ import {
   UserFlowRoutes,
 } from "./Dashboard.types"
 import { Loader, SlackIcon, UserFlow } from "components"
+import { ShortcutResponseStruct } from "utilities/guards"
+import { SlackIcon as SlackLogo } from "assets"
+import { errorToast } from "utilities/toasts"
 import { useGetShortcutIds, useGetSlackUserSupabase, useMainContext } from "utilities/hooks"
 
-import { SlackIcon as SlackLogo } from "assets"
 import "./Dashboard.scss"
 
 export const UserFlowContext = createContext<UserFlowContextType>({
@@ -34,8 +36,8 @@ const Dashboard = () => {
       if (error && typeof error === "object" && "code" in error && error.code === "PGRST116") return false
       return failureCount < 3
     },
-    onError: error => {
-      console.error("error", error)
+    onError: () => {
+      errorToast("Uh oh! Something went wrong fetching data from the server.", "supabaseSlack.error")
     },
     refetchOnMount: false,
     refetchOnReconnect: false,
@@ -46,7 +48,15 @@ const Dashboard = () => {
     enabled:
       (supabaseSlack.isSuccess && !supabaseSlack?.data?.active && !supabaseSlack.isLoading) || supabaseSlack.isError,
     onSuccess: data => {
-      if (Object.values(data.bestGuess).every(v => v === "")) setRoute("notFound")
+      if (!ShortcutResponseStruct.is(data)) {
+        errorToast("The server returned an unexpected response.", "error.server")
+        try {
+          ShortcutResponseStruct.assert(data)
+        } catch (e) {
+          console.error(e)
+        }
+      }
+      if (data.every(({ bestGuess }) => bestGuess === null)) setRoute("notFound")
       else setRoute("found")
     },
   })

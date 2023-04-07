@@ -1,7 +1,7 @@
 import { FC } from "react"
 import { useSearchParams } from "react-router-dom"
 
-import { supabase } from "context"
+import { supabase } from "context/context"
 
 import { SlackIcon, Lafayette } from "assets"
 import "./Login.scss"
