@@ -9,6 +9,7 @@
     "tsa:watch": "tsc-alias --watch",
     "ts:watch": "concurrently \"npm run tsc:watch\" \"npm run tsa:watch\"",
     "node:watch": "nodemon dist/index.js",
+    "build": "tsc && tsc-alias",
     "start": " tsc && tsc-alias && concurrently \"npm run ts:watch\" \"npm run node:watch\"",
     "ngrok": "ngrok http 4739",
     "deploy": "tsc && tsc-alias && node dist/index.js"
@@ -23,6 +24,8 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "express-rate-limit": "^6.7.0",
+    "helmet": "^6.0.1",
     "immer": "^9.0.21",
     "morgan": "^1.10.0",
     "superstruct": "^1.0.3",

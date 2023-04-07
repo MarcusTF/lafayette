@@ -1,6 +1,12 @@
 import { RequestHandler } from "express"
 
-import { ShortcutWebhookBodyStruct, isShortcutWebhookBody } from "guards"
+import {
+  ActionStruct,
+  MentionStruct,
+  ShortcutWebhookBodyStruct,
+  StoryActionStruct,
+  isShortcutWebhookBody,
+} from "guards"
 import capitalize from "lodash/capitalize"
 import slack, { notifySlackUser } from "services/slack.service"
 import supabase from "services/supabase.service"
@@ -8,44 +14,46 @@ import { WorkspaceStruct } from "./webhook.shortcut.controller.guards"
 import { Mention, ShortcutWebhookBody, SlackIdentityData } from "types"
 import { Workspace } from "./webhook.shortcut.controller.types"
 import { User } from "@supabase/supabase-js"
+import { array, assert, is } from "superstruct"
 
+// file deepcode ignore HTTPSourceWithUncheckedType: Superstruct guards the type.
 function reduceMentions(actions: ShortcutWebhookBody["actions"], workspace: Workspace, users: User[]) {
-  return actions.reduce<Mention[]>((acc, action) => {
-    if (action.entity_type !== "story-comment") {
-      return acc || ([] as Mention[])
-    }
-    action.mention_ids?.forEach((id, index) => {
-      if (!action.text || !action.app_url || !action.author_id) return
-      const mentionRegex = /\[(@[a-zA-Z0-9]+)\]\(.*\)/g
-      const mentionMatches = action.text.matchAll(mentionRegex)
-      const mentions = Array.from(mentionMatches).map(match => match[1])
-      const shortcutUser = workspace.shortcut_users.find(user => user.id === id)
-      const slackUser = shortcutUser?.slack_user
-      if (!slackUser) return
+  return array(ActionStruct).is(actions)
+    ? actions.reduce<Mention[]>((acc, action) => {
+        if (!StoryActionStruct.is(action)) return acc
+        action.mention_ids?.forEach((id, index) => {
+          if (!action.text || !action.app_url || !action.author_id) return
+          const mentionRegex = /\[(@[a-zA-Z0-9]+)\]\(.*\)/g
+          const mentionMatches = action.text.matchAll(mentionRegex)
+          const mentions = Array.from(mentionMatches).map(match => match[1])
+          const shortcutUser = workspace.shortcut_users.find(user => user.id === id)
+          const slackUser = shortcutUser?.slack_user
+          if (!slackUser) return
 
-      const authorUserId = workspace.shortcut_users?.find(user => user.id === action.author_id)?.user
-      const authorUser = users?.find?.(user => user.id === authorUserId)
-      const author = authorUser?.user_metadata?.full_name || authorUser?.email || "Someone"
+          const authorUserId = workspace.shortcut_users?.find(user => user.id === action.author_id)?.user
+          const authorUser = users?.find?.(user => user.id === authorUserId)
+          const author = authorUser?.user_metadata?.full_name || authorUser?.email || "Someone"
 
-      if (id && mentions[index]) {
-        acc.push({
-          id,
-          name: mentions[index],
-          text: action.text.replace(mentionRegex, "$1"),
-          appUrl: action.app_url,
-          authorId: action.author_id,
-          workspace: {
-            id: workspace.id,
-            name: workspace.name || "",
-          },
-          slackUser,
-          shortcutUser,
-          author,
+          if (id && mentions[index]) {
+            acc.push({
+              id,
+              name: mentions[index],
+              text: action.text.replace(mentionRegex, "$1"),
+              appUrl: action.app_url,
+              authorId: action.author_id,
+              workspace: {
+                id: workspace.id,
+                name: workspace.name || "",
+              },
+              slackUser,
+              shortcutUser,
+              author,
+            })
+          }
         })
-      }
-    })
-    return acc
-  }, [] as Mention[])
+        return acc
+      }, [] as Mention[])
+    : []
 }
 
 const post: RequestHandler = async (req, res) => {
@@ -103,7 +111,7 @@ const post: RequestHandler = async (req, res) => {
       error.status >= 400 &&
       error.status < 600
     ) {
-      return res.status(error.status).send(error.message)
+      return res.status(error.status).json(error.message)
     } else return res.status(500).send("Internal Server Error")
   }
 }
