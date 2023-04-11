@@ -6,6 +6,7 @@ import tsCongigPaths from "vite-tsconfig-paths"
 export default defineConfig({
   plugins: [tsCongigPaths(), react()],
   build: {
+    target: "esnext",
     rollupOptions: {
       output: {
         dir: "../server/dist/public",
