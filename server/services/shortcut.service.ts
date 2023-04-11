@@ -7,7 +7,7 @@ import { ShortcutMember, SupabaseDatabase, WorkspaceRes } from "types"
 import { WorkspaceResStruct, isShortcutMemberArray } from "guards"
 import supabase from "./supabase.service"
 
-export const updateShortcutUsers = async () => {
+export const updateShortcutUsers = async (): Promise<[string, ResponseInit]> => {
   try {
     const { data: workspaceData, error: workspaceError } = await supabase.from("shortcut_workspaces").select(
       `
@@ -20,10 +20,13 @@ export const updateShortcutUsers = async () => {
 
     if (workspaceError) throw workspaceError
     if (!workspaceData)
-      return new Response("No workspaces found", {
-        headers: { "Content-Type": "application/json" },
-        status: 200,
-      })
+      return [
+        "No workspaces found",
+        {
+          headers: { "Content-Type": "application/json" },
+          status: 200,
+        },
+      ]
 
     WorkspaceResStruct.assert(workspaceData)
 
@@ -37,10 +40,13 @@ export const updateShortcutUsers = async () => {
     const shortcutMembers = await getShortcutMembersByWorkspace(workspaceData, authUsers, true)
 
     if (!shortcutMembers?.length)
-      return new Response("No members found", {
-        headers: { "Content-Type": "application/json" },
-        status: 200,
-      })
+      return [
+        "No members found",
+        {
+          headers: { "Content-Type": "application/json" },
+          status: 200,
+        },
+      ]
 
     const { error } = await supabase
       .from("shortcut_user")
@@ -48,16 +54,22 @@ export const updateShortcutUsers = async () => {
     if (error) throw error
 
     console.log("Fetched Shortcut members")
-    return new Response("Success", {
-      headers: { "Content-Type": "application/json" },
-      status: 200,
-    })
+    return [
+      "Success",
+      {
+        headers: { "Content-Type": "application/json" },
+        status: 200,
+      },
+    ]
   } catch (error) {
     console.error(error)
-    return new Response(JSON.stringify({ error }), {
-      headers: { "Content-Type": "application/json" },
-      status: 400,
-    })
+    return [
+      JSON.stringify({ error }),
+      {
+        headers: { "Content-Type": "application/json" },
+        status: 400,
+      },
+    ]
   }
 }
 
