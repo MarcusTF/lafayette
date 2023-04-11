@@ -2,23 +2,6 @@ import { fetchShortcutMembers, updateShortcutUsers } from "services/shortcut.ser
 import { RequestHandler } from "express"
 import supabase from "services/supabase.service"
 
-const post: RequestHandler = async (req, res) => {
-  if (!req.headers.authorization) return void res.status(401).send("Unauthorized")
-  try {
-    const {
-      data: { user },
-      error: userError,
-    } = await supabase.auth.getUser(req.headers.authorization)
-    if (!user) return void res.status(401).send("Unauthorized")
-    if (userError) return void res.status(userError?.status || 401).json(userError?.message || "Unauthorized")
-
-    updateShortcutUsers()
-  } catch (error) {
-    console.log(error)
-    res.status(500).send("Internal Server Error")
-  }
-}
-
 const get: RequestHandler = async (req, res) => {
   if (!req.headers.authorization) return void res.status(401).send("Unauthorized")
   try {
