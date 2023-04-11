@@ -7,7 +7,10 @@ import { Context, supabase } from "context/context"
 import { UserFlowContext } from "pages"
 import { SetupSyncMutation, SetupSyncVariables } from "pages/Confirm/Confirm.types"
 import { AppUser, parseSession } from "./utils"
-import { ShortcutResponse, SlackUser } from "./types"
+import { ShortcutResponse } from "./types"
+import { Database } from "supabase"
+
+type SlackUser = Database["public"]["Tables"]["slack_user"]["Row"]
 
 export const useGetSlackUserSupabase = (options?: UseQueryOptions<SlackUser>) => {
   const { user } = useContext(Context)
@@ -119,6 +122,7 @@ export const useContexts = () => {
   return { ...mainContext, ...userFlowContext }
 }
 async function activateUser(user: SetupSyncVariables) {
+  if (!user.slackId) throw new Error("No slack id")
   const { error: error3 } = await supabase.from("slack_user").upsert({ id: user.slackId, active: true })
   if (error3) throw error3
 }
@@ -129,6 +133,8 @@ async function upsertShortcutUsers(shortcut_users: { id: string; user: string; s
 }
 
 async function upsertSlack(user: SetupSyncVariables) {
+  if (!user.slackId) throw new Error("No slack id")
+  if (!user.id) throw new Error("No user id")
   const { error } = await supabase.from("slack_user").upsert({ user: user.id, id: user.slackId }, { onConflict: "id" })
   if (error) throw error
 }
