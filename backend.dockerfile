@@ -1,5 +1,5 @@
 FROM node:latest
-ARG PORT=5432
+ARG PORT=9238
 EXPOSE $PORT:$PORT
 WORKDIR /
 COPY server/package.json .

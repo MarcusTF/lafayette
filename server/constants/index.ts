@@ -7,7 +7,7 @@ export const port = stringNumber(process.env.PORT) || 3000
 export const port2 = stringNumber(process.env.PORT2) || 3001
 
 export const corsOptions: CorsOptions = {
-  origin: process.env.APP_URL,
+  origin: [process.env.APP_URL || "http://localhost:" + port, "https://app.shortcut.com"],
   optionsSuccessStatus: 200,
 }
 
