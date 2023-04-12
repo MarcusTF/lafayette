@@ -16,4 +16,4 @@ export const rateLimitOptions: Partial<RLOptions> = {
   max: 100,
 }
 
-export const helmetOptions = { xssFilter: true } as HelmetOptions
+export const helmetOptions = {} as HelmetOptions
