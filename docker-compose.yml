@@ -1,0 +1,15 @@
+version: "3.4"
+
+services:
+  fluffbot:
+    image: lafayette.api:0.1.2
+    build:
+      context: .
+      dockerfile: ./backend.dockerfile
+    env_file:
+      - backend.env
+    environment:
+      NODE_ENV: production
+    ports:
+      - 5432:5432
+      - 2345:2345

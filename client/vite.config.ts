@@ -9,7 +9,7 @@ export default defineConfig({
     target: "esnext",
     rollupOptions: {
       output: {
-        dir: "../server/dist/public",
+        dir: "./build",
       },
     },
   },
