@@ -25,6 +25,7 @@ server
   .use(express.json())
   .use(cors(corsOptions))
   .use(morgan("dev"))
+  .get("/yougood", (_, res) => res.status(200).send("Yeah, man, I'm good!"))
   .use(...routes)
   .listen(port, () => {
     console.log("Server is running on port " + port + "!")

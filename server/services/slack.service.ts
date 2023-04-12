@@ -188,7 +188,6 @@ slack.event("app_home_opened", async ({ event, client, logger }) => {
       },
     })
     logger.info("Published home tab for user: ", user)
-    slack.stop()
   } catch (error) {
     logger.error(error)
   }
