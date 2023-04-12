@@ -7,4 +7,4 @@ const routes = e.Router()
 routes.use(...webhook)
 routes.use(...shortcut)
 
-export default [process.env.API_VERSION || "v1", routes] as const
+export default ["/v1", routes] as const
