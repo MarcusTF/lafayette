@@ -8,7 +8,7 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        dir: "../server/dist/public",
+        dir: "./build",
       },
     },
   },

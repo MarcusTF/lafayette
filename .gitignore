@@ -28,5 +28,10 @@ dockercompose.yml
 *.sln
 *.sw?
 
-.env
+*.env
 supabase
+
+client/build
+server/dist
+client/build/*
+server/dist/*
