@@ -101,7 +101,10 @@ async function getShortcutMembersByWorkspace<F extends boolean>(
           },
         })
 
-        if (!isShortcutMemberArray(shortcutApiMembers)) return []
+        if (!isShortcutMemberArray(shortcutApiMembers)) {
+          console.error("Failed to validate Shortcut members", shortcutApiMembers)
+          return []
+        }
 
         const members = shortcutApiMembers
           .flatMap(member => {

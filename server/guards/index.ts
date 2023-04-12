@@ -112,7 +112,7 @@ export const ShortcutWebhookBodyStruct: Describe<ShortcutWebhookBody> = type({
 
 export const isShortcutWebhookBody = (data: unknown): data is ShortcutWebhookBody => ShortcutWebhookBodyStruct.is(data)
 
-export const DisplayIconStruct = object({
+export const DisplayIconStruct = type({
   created_at: string(),
   entity_type: string(),
   id: string(),
@@ -120,7 +120,7 @@ export const DisplayIconStruct = object({
   url: string(),
 })
 
-export const ProfileStruct = object({
+export const ProfileStruct = type({
   deactivated: boolean(),
   display_icon: DisplayIconStruct,
   email_address: string(),
@@ -133,7 +133,7 @@ export const ProfileStruct = object({
   two_factor_auth_activated: boolean(),
 })
 
-export const ShortcutMemberStruct = object({
+export const ShortcutMemberStruct = type({
   created_at: string(),
   disabled: boolean(),
   entity_type: string(),

@@ -93,6 +93,7 @@ const post: RequestHandler = async (req, res) => {
     })
     const errors = await Promise.all(errorPromises)
     if (errors[0]) throw errors[0]
+    return res.status(200).send("OK")
   } catch (error) {
     if (
       error &&
