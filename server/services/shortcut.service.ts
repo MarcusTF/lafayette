@@ -1,10 +1,10 @@
 import type { User } from "@supabase/supabase-js"
 
 import axios from "axios"
-import { array, assert } from "superstruct"
+import { array, assert, is } from "superstruct"
 
 import { ShortcutMember, SupabaseDatabase, WorkspaceRes } from "types"
-import { ShortcutMemberStruct, WorkspaceResStruct, isShortcutMemberArray } from "guards"
+import { ShortcutMemberStruct, WorkspaceResStruct, isShortcutMember, isShortcutMemberArray } from "guards"
 import supabase from "./supabase.service"
 
 export const updateShortcutUsers = async (): Promise<[string, ResponseInit]> => {
@@ -101,17 +101,13 @@ async function getShortcutMembersByWorkspace<F extends boolean>(
           },
         })
 
-        if (!isShortcutMemberArray(shortcutApiMembers)) {
-          try {
-            assert(shortcutApiMembers, array(ShortcutMemberStruct))
-          } catch (e) {
-            console.error("Failed to validate Shortcut members", e)
-          } finally {
-            return []
-          }
+        if (!is(shortcutApiMembers, array())) {
+          console.error("Shortcut API returned non-array", shortcutApiMembers)
+          return []
         }
 
         const members = shortcutApiMembers
+          .filter(isShortcutMember)
           .flatMap(member => {
             const user = authUsers?.find?.(authUser => authUser.email === member.profile.email_address) || null
             const shortcutUser = shortcutUsers?.find?.(shortcutUser => shortcutUser?.user === user?.id) || null
