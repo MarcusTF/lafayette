@@ -1,20 +1,13 @@
 import { RequestHandler } from "express"
 
-import {
-  ActionStruct,
-  MentionStruct,
-  ShortcutWebhookBodyStruct,
-  StoryActionStruct,
-  isShortcutWebhookBody,
-} from "guards"
-import capitalize from "lodash/capitalize"
+import { ActionStruct, ShortcutWebhookBodyStruct, StoryActionStruct } from "guards"
 import slack, { notifySlackUser } from "services/slack.service"
 import supabase from "services/supabase.service"
 import { WorkspaceStruct } from "./webhook.shortcut.controller.guards"
-import { Mention, ShortcutWebhookBody, SlackIdentityData } from "types"
+import { Mention, ShortcutWebhookBody } from "types"
 import { Workspace } from "./webhook.shortcut.controller.types"
 import { User } from "@supabase/supabase-js"
-import { array, assert, is } from "superstruct"
+import { array } from "superstruct"
 
 // file deepcode ignore HTTPSourceWithUncheckedType: Superstruct guards the type.
 function reduceMentions(actions: ShortcutWebhookBody["actions"], workspace: Workspace, users: User[]) {

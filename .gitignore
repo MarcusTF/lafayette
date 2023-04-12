@@ -29,7 +29,7 @@ dockercompose.yml
 *.sw?
 
 *.env
-supabase
+/supabase
 
 client/build
 server/dist
