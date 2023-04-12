@@ -122,7 +122,7 @@ export const DisplayIconStruct = type({
 
 export const ProfileStruct = type({
   deactivated: boolean(),
-  display_icon: DisplayIconStruct,
+  display_icon: nullable(DisplayIconStruct),
   email_address: string(),
   entity_type: string(),
   gravatar_hash: string(),
@@ -145,10 +145,37 @@ export const ShortcutMemberStruct = type({
   updated_at: string(),
 })
 
+interface RootObject {
+  created_at: string
+  created_without_invite: boolean
+  disabled: boolean
+  entity_type: string
+  global_id: string
+  group_ids: string[]
+  id: string
+  profile: Profile
+  role: string
+  state: string
+  updated_at: string
+}
+
+interface Profile {
+  entity_type: string
+  deactivated: boolean
+  two_factor_auth_activated: boolean
+  mention_name: string
+  name: string
+  gravatar_hash: string
+  id: string
+  display_icon?: any
+  is_owner: boolean
+  email_address: string
+}
+
 export const isShortcutMember = (data: unknown): data is ShortcutMember => ShortcutMemberStruct.is(data)
 export const isShortcutMemberArray = (data: unknown): data is ShortcutMember[] => array(ShortcutMemberStruct).is(data)
 
-export const MentionStruct: Describe<Mention> = object({
+export const MentionStruct: Describe<Mention> = type({
   id: string(),
   name: string(),
   text: string(),
