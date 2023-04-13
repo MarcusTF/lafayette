@@ -1,11 +1,10 @@
-import { Dispatch, FC, PropsWithChildren, SetStateAction, createContext, useState } from "react"
+import { FC, PropsWithChildren, createContext, useState } from "react"
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { createClient } from "@supabase/supabase-js"
 import { AppUser } from "../utilities/utils"
 import { Database } from "../supabase"
 import { MainContext, SelectedShortcut } from "./context.types"
-import { ShortcutMember } from "utilities/types"
 
 export const supabase = createClient<Database>(
   import.meta.env.VITE_SUPABASE_URL,

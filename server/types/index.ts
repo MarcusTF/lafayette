@@ -3,6 +3,23 @@ export type Json = string | number | boolean | null | { [key: string]: Json } | 
 export interface Database {
   public: {
     Tables: {
+      roles: {
+        Row: {
+          id: string
+          role: string | null
+          user_id: string | null
+        }
+        Insert: {
+          id?: string
+          role?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          id?: string
+          role?: string | null
+          user_id?: string | null
+        }
+      }
       shortcut_user: {
         Row: {
           id: string
@@ -60,18 +77,6 @@ export interface Database {
           user?: string | null
         }
       }
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      [_ in never]: never
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
     }
   }
 }
