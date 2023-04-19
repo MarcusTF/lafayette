@@ -15,7 +15,7 @@ const Found = () => {
       })
       ?.map(({ bestGuess, workspace }) => {
         return {
-          workspace: workspace?.name,
+          workspace: { name: workspace?.name, id: workspace?.id },
           name: bestGuess?.profile?.name,
           email: bestGuess?.profile?.email_address,
           mentionName: bestGuess?.profile?.mention_name,
