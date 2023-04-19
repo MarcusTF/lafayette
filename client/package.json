@@ -4,9 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "start": "env-cmd -f ../.env vite",
+    "start": "env-cmd -f ../frontend.env vite",
     "build": "tsc &&  vite build",
-    "build:dev": "tsc && env-cmd -f ../.env vite build --outDir ../server/dist/client",
+    "build:dev": "tsc && env-cmd -f ../frontend.env vite build --outDir ../server/dist/client",
     "preview": "vite preview"
   },
   "dependencies": {
