@@ -77,7 +77,7 @@ const NotFound: FC<Props> = ({ isBadGuess }) => {
     setSelectedShortcut(
       matches.map(match => ({
         id: match?.id,
-        workspace: match?.workspace?.name,
+        workspace: { name: match?.workspace?.name, id: match?.workspace?.id },
         name: match?.profile?.name,
         email: match?.profile?.email_address,
         mentionName: match?.profile?.mention_name,

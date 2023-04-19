@@ -6,7 +6,7 @@ import { AppUser } from "utilities/utils"
 export type SelectedShortcut =
   | {
       id?: string
-      workspace: string
+      workspace: { name: string; id: string }
       name: string | undefined
       email: string | undefined
       mentionName: string | undefined
