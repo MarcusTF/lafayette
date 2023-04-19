@@ -23,7 +23,9 @@ import {
   refine,
   is,
   intersection,
+  enums,
 } from "superstruct"
+import { ChatCompletionRequestMessage } from "openai"
 
 const SlackUserStruct: Describe<WRSlackUser> = nullable(
   object({
@@ -161,4 +163,10 @@ export const MentionStruct: Describe<Mention> = type({
   slackUser: SlackUserStruct,
   shortcutUser: ShortcutUserStructSingle,
   author: string(),
+})
+
+export const OpenAIMessageStruct: Describe<ChatCompletionRequestMessage> = type({
+  role: enums(["user", "system", "assistant"]),
+  content: string(),
+  name: optional(string()),
 })

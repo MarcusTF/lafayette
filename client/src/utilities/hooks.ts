@@ -11,9 +11,41 @@ import { ShortcutResponse } from "./types"
 import { Database } from "supabase"
 
 type SlackUser = Database["public"]["Tables"]["slack_user"]["Row"]
+type Workspace = Database["public"]["Tables"]["shortcut_workspaces"]["Row"]
+type WorkspaceInsert = Database["public"]["Tables"]["shortcut_workspaces"]["Insert"]
+
+export const useGetWorkspaces = (options?: UseQueryOptions<Workspace[]>) => {
+  const getWorkspaces = async () => {
+    const { data, error, status, statusText } = await supabase.from("shortcut_workspaces").select()
+    console.log(status, statusText)
+    if (error) throw error
+    return data
+  }
+  return useQuery<Workspace[]>(["workspaces"], getWorkspaces, options)
+}
+
+export const useAddNewWorkspace = (options?: UseMutationOptions<"success", PostgrestError, WorkspaceInsert>) => {
+  const addNewWorkspace: MutationFunction<"success", WorkspaceInsert> = async (workspace: WorkspaceInsert) => {
+    const { error } = await supabase.from("shortcut_workspaces").insert(workspace)
+    if (error) throw error
+    return "success"
+  }
+  return useMutation(addNewWorkspace, options)
+}
+
+export const useGetUserRole = (options?: UseQueryOptions<boolean>) => {
+  const { user } = useContext(Context)
+  const getUserRole = async () => {
+    const { data, error } = await supabase.from("roles").select("*").eq("user_id", user?.id).single()
+    if (error) throw error
+    return ["admin", "super-admin"].includes(data?.role || "")
+  }
+  return useQuery<boolean>(["userRole"], getUserRole, options)
+}
 
 export const useGetSlackUserSupabase = (options?: UseQueryOptions<SlackUser>) => {
   const { user } = useContext(Context)
+  if (!user) return undefined
   const getSlackUserSupabase = async () => {
     const { data, error } = await supabase.from("slack_user").select("*").eq("user", user?.id).single()
     if (error) throw error
