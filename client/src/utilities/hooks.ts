@@ -28,9 +28,7 @@ export const useGetShortcutIds = (options?: UseQueryOptions<ShortcutResponse>) =
   const getShortcutIds = async () =>
     (
       await axios.get<ShortcutResponse>(
-        (import.meta.env.VITE_API_URL || "http://localhost:3000") +
-          (`/${import.meta.env.VITE_API_VERSION}` || "/v1") +
-          "/shortcut",
+        import.meta.env.VITE_API_URL + "/" + import.meta.env.VITE_API_VERSION + "/shortcut",
         {
           headers: {
             "Content-Type": "application/json",
@@ -99,8 +97,10 @@ export const useUndoSync = (options?: UseMutationOptions) => {
 export const useSetupSync = (options: UseMutationOptions<void, PostgrestError, SetupSyncVariables>) => {
   const setupSync: SetupSyncMutation = async user => {
     try {
-      const shortcut_users = user.shortcutIds?.flatMap(id =>
-        id && user.id ? [{ id, user: user.id, slack_id: user.slackId }] : []
+      const shortcut_users = user.shortcutIds?.flatMap(([shortcutId, workspaceId]) =>
+        shortcutId && workspaceId && user.id
+          ? [{ id: shortcutId, user: user.id, slack_id: user.slackId, workspaceId }]
+          : []
       )
       if (!user.slackId || !user.id || !shortcut_users)
         throw new Error("Every user must have a slack id and a user id and at least one shortcut id")
@@ -132,8 +132,12 @@ async function activateUser(user: SetupSyncVariables) {
   if (error3) throw error3
 }
 
-async function upsertShortcutUsers(shortcut_users: { id: string; user: string; slack_id: string | undefined }[]) {
-  const { error: error2 } = await supabase.from("shortcut_user").upsert(shortcut_users)
+async function upsertShortcutUsers(
+  shortcut_users: { id: string; user: string; slack_id: string | undefined; workspaceId: string }[]
+) {
+  const { error: error2 } = await supabase
+    .from("shortcut_user")
+    .upsert(shortcut_users, { onConflict: "id", ignoreDuplicates: true })
   if (error2) throw error2
 }
 

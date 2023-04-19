@@ -20,14 +20,17 @@ const Confirm = () => {
     },
     onError: error => {
       setRoute("error")
+      setLoading(false)
     },
   })
 
   const bestGuesses = {
     slackId: user?.identities?.[0]?.id,
     shortcutIds: selectedShortcut
-      ? selectedShortcut?.map(ss => ss.id)
-      : shortcut?.data?.map(({ bestGuess }) => bestGuess?.id),
+      ? selectedShortcut?.map(ss => [ss.id, ss.workspace.id] as [string | undefined, string])
+      : shortcut?.data?.map(
+          ({ bestGuess, workspace }) => [bestGuess?.id, workspace.id] as [string | undefined, string]
+        ),
     id: user?.id,
   }
 
