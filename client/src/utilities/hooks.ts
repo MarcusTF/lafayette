@@ -99,7 +99,7 @@ export const useSetupSync = (options: UseMutationOptions<void, PostgrestError, S
     try {
       const shortcut_users = user.shortcutIds?.flatMap(([shortcutId, workspaceId]) =>
         shortcutId && workspaceId && user.id
-          ? [{ id: shortcutId, user: user.id, slack_id: user.slackId, workspaceId }]
+          ? [{ id: shortcutId, user: user.id, slack_id: user.slackId, workspace: workspaceId }]
           : []
       )
       if (!user.slackId || !user.id || !shortcut_users)
@@ -133,7 +133,7 @@ async function activateUser(user: SetupSyncVariables) {
 }
 
 async function upsertShortcutUsers(
-  shortcut_users: { id: string; user: string; slack_id: string | undefined; workspaceId: string }[]
+  shortcut_users: { id: string; user: string; slack_id: string | undefined; workspace: string }[]
 ) {
   const { error: error2 } = await supabase
     .from("shortcut_user")
