@@ -145,9 +145,9 @@ User's Message: ${userPrompt}
 export const stripAdditionalContext = (prompt: string) => oneLine`${prompt.replace(/\{\[.*\]\}/gim, "")}`
 
 export const stripAllAdditionalContext = (thread: ChatCompletionRequestMessage[]) =>
-  thread.map(messsage => ({
-    ...messsage,
-    content: stripAdditionalContext(messsage.content),
+  thread.map(message => ({
+    ...message,
+    content: stripAdditionalContext(message.content),
   }))
 
 export default openAI

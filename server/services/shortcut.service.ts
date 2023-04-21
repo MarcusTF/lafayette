@@ -47,7 +47,14 @@ export const updateShortcutUsers = async (): Promise<[string, ResponseInit]> => 
           status: 200,
         },
       ]
-
+    const slackUsers = shortcutMembers.flatMap(({ slack_id }) => {
+      if (slack_id) return [{ id: slack_id }]
+      return []
+    })
+    const { error: slackError } = await supabase
+      .from("slack_user")
+      .upsert(slackUsers, { onConflict: "id", ignoreDuplicates: true })
+    if (slackError) throw slackError
     const { error } = await supabase
       .from("shortcut_user")
       .upsert(shortcutMembers, { onConflict: "id", ignoreDuplicates: false })
