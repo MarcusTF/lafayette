@@ -1,4 +1,5 @@
 import { Session } from "@supabase/supabase-js"
+import { produce } from "immer"
 
 export const parseSession = (session: Session) => ({
   ...session.user,
@@ -12,5 +13,26 @@ export const parseSession = (session: Session) => ({
     token_type: session.token_type,
   },
 })
+
+export const getDomainParts = () => {
+  const { hostname } = window.location
+  if (hostname.includes("localhost")) {
+    return {
+      tld: null,
+      domain: "localhost",
+      subdomains: [hostname.split(".")[0]],
+      ...window.location,
+    }
+  }
+
+  const hostnameArray = hostname.split(".")
+  const tldWithPath = hostnameArray.pop()
+  const [tld] = tldWithPath?.split("/") || []
+  const domain = hostnameArray.pop()
+  const subdomains = hostnameArray
+
+  if (subdomains[0] === "www") subdomains.shift()
+  return { tld, domain, subdomains, ...window.location }
+}
 
 export type AppUser = ReturnType<typeof parseSession>

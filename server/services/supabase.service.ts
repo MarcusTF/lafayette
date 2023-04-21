@@ -8,4 +8,11 @@ if (!supabaseKey) throw new Error("Missing SUPABASE_KEY || SUPABASE_SECRET_KEY")
 
 const supabase = createClient<Database>(process.env.SUPABASE_URL, supabaseKey)
 
+export async function searchSupabaseVectors(vector: number[]) {
+  return await supabase.rpc("vector_search", {
+    vector,
+    entries: 5,
+  })
+}
+
 export default supabase

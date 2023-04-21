@@ -7,7 +7,7 @@ const router = e.Router()
 router.post(
   "/",
   cors({
-    origin: "ai.fluffbot.com",
+    origin: `chat.${process.env.APP_URL?.split("://")[1]}`,
   }),
   chat.post
 )
