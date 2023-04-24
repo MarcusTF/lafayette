@@ -4,10 +4,14 @@ import chat from "./chat.controller"
 
 const router = e.Router()
 
+const [protocol, domain] = process.env.APP_URL?.split("://") || ["http", "localhost:" + 5173]
+
 router.post(
   "/",
   cors({
-    origin: `chat.${process.env.APP_URL?.split("://")[1]}`,
+    credentials: true,
+    optionsSuccessStatus: 200,
+    origin: `${protocol}://chat.${domain}`,
   }),
   chat.post
 )

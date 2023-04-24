@@ -19,8 +19,6 @@ function getRedirectURL(mode: string): string {
     main = `${protocol}://${domain}/login`,
     chatbot = `${protocol}://chat.${domain}/login`
 
-  const url = new URL(import.meta.env.VITE_APP_URL)
-
   return mode === "main" ? main : chatbot
 }
 

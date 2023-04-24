@@ -6,8 +6,12 @@ import { HelmetOptions } from "helmet"
 export const port = stringNumber(process.env.PORT) || 3000
 export const port2 = stringNumber(process.env.PORT2) || 3001
 
+export const appUrlWithFallback = process.env.APP_URL || "http://localhost:5173"
+
+export const [protocol, domain] = appUrlWithFallback?.split("://")
+
 export const corsOptions: CorsOptions = {
-  origin: [process.env.APP_URL || "http://localhost:" + port, "https://app.shortcut.com"],
+  origin: [`${protocol}://chat.${domain}`, appUrlWithFallback, "https://app.shortcut.com"],
   optionsSuccessStatus: 200,
 }
 

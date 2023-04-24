@@ -1,18 +1,24 @@
-import { useContext } from "react"
-import axios from "axios"
 import { MutationFunction, UseMutationOptions, UseQueryOptions, useMutation, useQuery } from "@tanstack/react-query"
 import { PostgrestError } from "@supabase/supabase-js"
+import { SSE } from "sse.js"
+import { useCallback, useContext, useEffect, useState } from "react"
+import { useImmer, Updater } from "use-immer"
+import axios from "axios"
 
+import { AppUser, getDomainParts, parseSession } from "./utils"
+import { ChatState, Message } from "./hooks.types"
 import { Context, supabase } from "context/context"
-import { UserFlowContext } from "pages"
-import { SetupSyncMutation, SetupSyncVariables } from "pages/Confirm/Confirm.types"
-import { AppUser, parseSession } from "./utils"
-import { ShortcutResponse } from "./types"
 import { Database } from "supabase"
+import { SetupSyncMutation, SetupSyncVariables } from "pages/Confirm/Confirm.types"
+import { ShortcutResponse } from "./types"
+import { UserFlowContext } from "pages"
+import { errorToast } from "./toasts"
+import Color from "color"
 
 type SlackUser = Database["public"]["Tables"]["slack_user"]["Row"]
 type Workspace = Database["public"]["Tables"]["shortcut_workspaces"]["Row"]
 type WorkspaceInsert = Database["public"]["Tables"]["shortcut_workspaces"]["Insert"]
+type ShortcutInsert = Database["public"]["Tables"]["shortcut_user"]["Insert"]
 
 export const useGetWorkspaces = (options?: UseQueryOptions<Workspace[]>) => {
   const getWorkspaces = async () => {
@@ -137,6 +143,7 @@ export const useSetupSync = (options: UseMutationOptions<void, PostgrestError, S
       if (!user.slackId || !user.id || !shortcut_users)
         throw new Error("Every user must have a slack id and a user id and at least one shortcut id")
       await upsertSlack(user)
+      //@ts-ignore
       await upsertShortcutUsers(shortcut_users)
       await activateUser(user)
     } catch (e) {
@@ -164,7 +171,7 @@ async function activateUser(user: SetupSyncVariables) {
   if (error3) throw error3
 }
 
-async function upsertShortcutUsers(shortcut_users: { id: string; user: string; slack_id: string | undefined }[]) {
+async function upsertShortcutUsers(shortcut_users: ShortcutInsert[]) {
   const { error: error2 } = await supabase.from("shortcut_user").upsert(shortcut_users)
   if (error2) throw error2
 }
@@ -174,4 +181,116 @@ async function upsertSlack(user: SetupSyncVariables) {
   if (!user.id) throw new Error("No user id")
   const { error } = await supabase.from("slack_user").upsert({ user: user.id, id: user.slackId }, { onConflict: "id" })
   if (error) throw error
+}
+
+const CHAT_URL = `${import.meta.env.VITE_API_URL}/${import.meta.env.VITE_API_VERSION}/chat`
+
+function handleError<T>(error: T, setChatState: Updater<ChatState>) {
+  setChatState(chatState => {
+    chatState.loading = false
+    // chatState.prompt = ""
+    chatState.answer = ""
+  })
+  console.error(error)
+  errorToast("Something went wrong!", "error.chat")
+}
+
+export const useChat = () => {
+  const { user } = useContext(Context)
+  const [chatState, setChatState] = useImmer<ChatState>({
+    messages: JSON.parse(localStorage.getItem("messages") || "[]") as Message[],
+    loading: false,
+    answer: "",
+  })
+
+  useEffect(() => {
+    if (chatState.messages.length > 0) localStorage.setItem("messages", JSON.stringify(chatState.messages))
+  }, [chatState.messages])
+
+  const initiateStream = async (messages: Message[], chatWindow: HTMLDivElement | null) => {
+    const eventSource = new SSE(CHAT_URL, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${user?.auth?.access_token}`,
+      },
+      method: "POST",
+      payload: JSON.stringify({ messages }),
+    })
+
+    eventSource.onopen = () => {
+      setChatState(draft => void (draft.loading = true))
+      console.log("open")
+    }
+
+    eventSource.onerror = () => {
+      console.error("error")
+      errorToast("Something went wrong!", "error.chat")
+      setChatState(draft => void (draft.loading = false))
+      eventSource.close()
+    }
+
+    eventSource.addEventListener("message", event => {
+      if (chatWindow) chatWindow.scroll({ behavior: "smooth", top: chatWindow.scrollHeight })
+      try {
+        setChatState(draft => void (draft.loading = false))
+        if (event.data === "[DONE]") {
+          setChatState(chatState => {
+            chatState.answer = ""
+            chatState.loading = false
+          })
+          eventSource.close()
+          return
+        }
+
+        const completionResponse = JSON.parse(event.data)
+        const [{ delta }] = completionResponse.choices
+
+        if (delta.content) {
+          setChatState(draft => {
+            draft.answer = (draft.answer ?? "") + delta.content
+            if (draft.messages[draft.messages.length - 1].role === "assistant")
+              draft.messages[draft.messages.length - 1].content = draft.answer
+            else draft.messages.push({ role: "assistant", content: draft.answer })
+          })
+        }
+      } catch (err) {
+        handleError(err, setChatState)
+      }
+    })
+
+    eventSource.stream()
+  }
+
+  return { setChatState, chatState, initiateStream }
+}
+
+export const useFetchSyntaxHighlighter = () => {
+  const importSyntaxHighlighter = async () => {
+    const { PrismAsync: SyntaxHighlight } = await import("react-syntax-highlighter")
+    const { cb: style } = await import("react-syntax-highlighter/dist/cjs/styles/prism")
+    return { SyntaxHighlight, style }
+  }
+  const { data, isLoading, error } = useQuery(["syntaxHighlighter"], importSyntaxHighlighter)
+  return { SyntaxHighlight: data?.SyntaxHighlight, style: data?.style, isLoading, error }
+}
+
+export const useColorizer = () => {
+  const [color, setColor] = useImmer({
+    h: 208,
+    s: 92,
+    l: 20,
+    hsl: "hsl(208, 92%, 20%)",
+    hex: "043763",
+  })
+  const root = document.documentElement
+  useEffect(() => {
+    setColor(draft => {
+      draft.hsl = `hsl(${draft.h}, ${draft.s}%, ${draft.l}%)`
+      draft.hex = Color.hsl(draft.h, draft.s, draft.l).hex()
+    })
+    root.style.setProperty("--user-color", `hsl(${color.h}, ${color.s}%, ${color.l}%)`)
+    root.style.setProperty("--user-color-light", `hsl(${color.h}, ${color.s - 30}%, ${color.l + 15}%)`)
+    root.style.setProperty("--user-color-very-light", `hsl(${color.h}, ${color.s - 60}%, ${color.l + 50}%)`)
+  }, [color, root])
+  return [color, setColor] as const
 }

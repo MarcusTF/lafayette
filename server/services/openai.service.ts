@@ -31,9 +31,10 @@ export const countTokens = (text: string) => tokenizer.encode(text).bpe.length
 
 export async function moderateMessageContent(prompt?: string) {
   if (!prompt) throw new Error("Missing prompt")
-  return (await openAI.createModeration({ model: "text-moderation-latest", input: prompt }))?.data?.results?.some(
-    ({ flagged }) => flagged
-  )
+  const { data } = await openAI.createModeration({ model: "text-moderation-latest", input: prompt })
+  const flagged = data?.results?.some(({ flagged }) => flagged)
+  const passed = !flagged
+  return passed
 }
 
 export const trimMessageThread = (thread: ChatCompletionRequestMessage[], threshold = MAX_TOTAL_TOKENS) => {
@@ -93,21 +94,20 @@ export const doesNeedMoreContext = async (prompt: string) => {
 }
 
 export const getLafayettePrompt = (currentUserName?: string) => oneLine`
-You are Lafayette, an AI assistant for Haneke Design, a Tampa, Florida based tech company. Haneke provides Software Development, Design, and Marketing services to other businesses and individuals.
-
-You're a happy, peppy, apricot toy poodle. Answer as this character, be casual, and have fun with it, but always remain informative. Feel free to use analogies a dog would use to describe ideas if you can, dog puns, that kinda thing. Be playful and informative at the same time. If the user asks personal questions, just make something up that makes sense with your character! If you're asked how you're feeling or how you feel about something, just give a fun, non-specific answer that makes sense with your character.
-
-You serve the staff of the company helping answer questions ranging from tough dev questions, to helping them draft emails and documents, or answering company-related questions.
-
-You may use markdown as needed to format your responses. The user's message will be injected with additional context before being sent to you if needed and available.
-
-${currentUserName ? `The current user's name or email is: ${currentUserName}` : ""}
+Hello, I'm Lafayette, an AI assistant for Haneke Design. My capabilities are limited to this chat window,
+and I cannot access external information or resources. However, I'm here to help answer any questions you may
+have about our services or the company itself. Feel free to ask me anything, and I'll do my best to provide you
+with accurate and informative responses. If you need to speak with a specific team member, please let me know and I'll
+provide you with their name or contact information. And if I don't know the answer to a question, I'll let you know
+and try to point you in the right direction. I can respond in markdown when appropriate. ${
+  currentUserName ? `The current user's name or email is: ${currentUserName}.` : ""
+}
 `
 
 export const generateUserPrompt = (additionalContext: string, userPrompt: string) => oneLine`
-{[additional context: ${additionalContext}]}
+{[ADDITIONAL CONTEXT: ${additionalContext}]}
 
-User's Message: ${userPrompt}
+USER'S MESSAGE: ${userPrompt}
 `
 
 export const stripAdditionalContext = (prompt: string) => oneLine`${prompt.replace(/\{\[.*\]\}/gim, "")}`
@@ -126,15 +126,15 @@ export class ChatError extends Error {
 }
 
 export function streamHandlerProducer(chatCompletionThread: ChatCompletionResponseMessage[], response: Response) {
-  return function streamHandler(chunk: Buffer): boolean | undefined {
+  return function streamHandler(chunk: Buffer): void {
     let completionResponseMessage = ""
     if (chunk.toString().includes("[DONE]")) {
       const responseThread = prepareResponseThread(chatCompletionThread, completionResponseMessage)
-
-      return (
-        response.writable &&
+      if (response.writable) {
+        response.write(`event: message\n${chunk}\n\n`, error => console.error(error))
         response.write(`event: thread\ndata: ${JSON.stringify(responseThread)}\n\n`, () => response.end())
-      )
+      }
+      return void response.end()
     }
     completionResponseMessage = concatChunks(completionResponseMessage, chunk)
 
@@ -155,7 +155,7 @@ export async function injectContextAndTrim(
   latest: ChatCompletionResponseMessage,
   requestThread: ChatCompletionResponseMessage[]
 ) {
-  const latestPlusContext = await injectContext(latest)
+  const latestPlusContext = await injectContext(latest, requestThread)
   const chatCompletionThread = addLatestAndTrimThread(requestThread, latestPlusContext)
   return chatCompletionThread
 }
@@ -196,9 +196,11 @@ export function addLatestAndTrimThread(
   return finalMessageThread
 }
 
-export async function injectContext(message: ChatCompletionResponseMessage) {
-  const needsContext = await doesNeedMoreContext(message.content)
-  const context = needsContext && (await getAdditionalContext(message.content))
+export async function injectContext(message: ChatCompletionResponseMessage, thread: ChatCompletionResponseMessage[]) {
+  const currentChatSoFar = thread.map(message => message.content).join("\n") + "\n" + message
+  console.log(currentChatSoFar)
+  const context = await getAdditionalContext(currentChatSoFar)
+  console.log("context", context)
   const promptWithContext = context ? generateUserPrompt(context, message.content) : message.content
 
   return { ...message, content: promptWithContext }
@@ -230,6 +232,7 @@ export async function validateDataAppendSystemMessage(
       assert(messages, array())
     } catch (e) {
       console.error(e)
+      console.error("Invalid messages.", messages)
     } finally {
       throw new ChatError("Invalid messages.", 422)
     }

@@ -1,5 +1,12 @@
 :root {
   box-sizing: border-box;
+
+  --h: 208;
+  --s: 92%;
+  --l: 20%;
+  --user-color: hsl(var(--h), var(--s), var(--l));
+  --user-color-light: hsl(var(--h), calc(var(--s) - 30%), calc(var(--l) + 15%));
+  --user-color-very-light: hsl(var(--h), calc(var(--s) - 60%), calc(var(--l) + 50%));
 }
 
 html,
@@ -8,10 +15,11 @@ body,
 .App {
   height: 100%;
   width: 100%;
+  font-family: Lato, sans-serif;
 }
 
 * {
-  font-family: Lato, sans-serif;
+  font-family: inherit;
   box-sizing: inherit;
   margin: 0;
   padding: 0;

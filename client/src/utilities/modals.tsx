@@ -3,6 +3,7 @@ import capitalize from "lodash.capitalize"
 
 import type {
   AddWorkspaceModalFC,
+  ChatOptionsModalFC,
   ConfirmModalFC,
   ShortcutIdInfoModalFC,
   WorkspaceHelpModalFC,
@@ -10,8 +11,9 @@ import type {
 } from "./modals.types"
 
 import "./modals.scss"
-import { useAddNewWorkspace, useGetWorkspaces } from "./hooks"
+import { useAddNewWorkspace, useColorizer, useContexts, useGetWorkspaces } from "./hooks"
 import { FC, useState } from "react"
+import Color from "color"
 
 export const WorkspacesModal: WorkspacesModalFC = ({ isOpen, setIsOpen }) => {
   const [isOpen2, setIsOpen2] = useState<boolean>(false)
@@ -229,3 +231,65 @@ export const ShortcutIdInfoModal: ShortcutIdInfoModalFC = ({ isOpen, setIsOpen, 
     </div>
   </ReactModal>
 )
+
+export const ChatOptionsModal: ChatOptionsModalFC = ({ isOpen, setIsOpen }) => {
+  const { chat } = useContexts()
+  const [color, setColor] = useColorizer()
+  return (
+    <ReactModal
+      onRequestClose={() => setIsOpen(v => !v)}
+      isOpen={isOpen}
+      className='modal modal--confirm'
+      overlayClassName='modal__overlay modal__overlay--confirm'
+    >
+      <h1 className='modal__title'>Options</h1>
+      <label
+        className='label'
+        htmlFor='color'
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+        }}
+      >
+        <span>Change Color</span>
+        <input
+          type='color'
+          value={color.hex}
+          style={{
+            width: "50px",
+            height: "50px",
+            padding: "3px",
+            borderRadius: "5px",
+          }}
+          onChange={e =>
+            setColor(color => {
+              localStorage.setItem("color", e.target.value)
+              const [h, s, l] = Color(e.target.value).hsl().array()
+              color.h = h
+              color.s = s
+              color.l = l
+              color.hsl = `hsl(${h},${s}%,${l}%)`
+              color.hex = e.target.value
+            })
+          }
+        />
+      </label>
+      <div className='actions'>
+        <button
+          className='button button--undo button--confirm'
+          onClick={() => {
+            localStorage.removeItem("messages")
+            chat.setState(() => ({
+              answer: "",
+              loading: false,
+              messages: [],
+            }))
+          }}
+        >
+          Clear Chat History
+        </button>
+      </div>
+    </ReactModal>
+  )
+}

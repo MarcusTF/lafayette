@@ -43,7 +43,7 @@ const Dashboard = () => {
 
   const shortcut = useGetShortcutIds({
     enabled:
-      (supabaseSlack.isSuccess && !supabaseSlack?.data?.active && !supabaseSlack.isLoading) || supabaseSlack.isError,
+      (supabaseSlack?.isSuccess && !supabaseSlack?.data?.active && !supabaseSlack.isLoading) || supabaseSlack?.isError,
     onSuccess: data => {
       if (!ShortcutResponseStruct.is(data)) {
         errorToast("The server returned an unexpected response.", "error.server")
@@ -66,7 +66,7 @@ const Dashboard = () => {
       <main className='dashboard__main'>
         <Loader
           text='Fetching...'
-          loading={supabaseSlack.isLoading || (shortcut.fetchStatus !== "idle" && shortcut.isLoading) || loading}
+          loading={supabaseSlack?.isLoading || (shortcut.fetchStatus !== "idle" && shortcut.isLoading) || loading}
         >
           <UserFlowContext.Provider value={{ route, setRoute, shortcut, loading, setLoading }}>
             <UserFlow route={error ? "error" : route} />

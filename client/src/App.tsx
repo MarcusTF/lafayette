@@ -1,15 +1,14 @@
 import { Route, Routes } from "react-router-dom"
-import Modal from "react-modal"
 import { ToastContainer } from "react-toastify"
-import "react-toastify/dist/ReactToastify.css"
+import Modal from "react-modal"
 
-import Dashboard from "./pages/Dashboard/Dashboard"
-import Login from "./pages/Login/Login"
-import PrivateRoute from "./utilities/PrivateRoute"
-import { useGetSession, useWatchAuthChanges } from "./utilities/hooks"
+import { Login, Chat, Dashboard } from "pages"
+import { getDomainParts } from "utilities/utils"
+import { useGetSession, useWatchAuthChanges } from "utilities/hooks"
+import PrivateRoute from "utilities/PrivateRoute"
 
 import "./App.scss"
-import { getDomainParts } from "utilities/utils"
+import "react-toastify/dist/ReactToastify.css"
 
 Modal.setAppElement("#root")
 
@@ -29,7 +28,7 @@ function App() {
             <Route path='' element={<Login mode={"chatbot"} />} />
           </Route>
           <Route path='/' element={<PrivateRoute />}>
-            <Route path='' element={<>:)</>} />
+            <Route path='' element={<Chat />} />
           </Route>
         </Routes>
       ) : (

@@ -1,6 +1,7 @@
 import { UseMutateFunction, UseQueryResult } from "@tanstack/react-query"
 import { Dispatch, FC, SetStateAction } from "react"
 import { ShortcutResponse } from "./types"
+import { ChatState } from "./hooks.types"
 
 export type WorkspacesModalFC = FC<{
   isOpen: boolean
@@ -15,6 +16,11 @@ export type ConfirmModalFC = FC<{
 
 export type ShortcutIdInfoModalFC = FC<{
   shortcut: UseQueryResult<ShortcutResponse> | undefined
+  isOpen: boolean
+  setIsOpen: Dispatch<SetStateAction<boolean>>
+}>
+
+export type ChatOptionsModalFC = FC<{
   isOpen: boolean
   setIsOpen: Dispatch<SetStateAction<boolean>>
 }>

@@ -6,6 +6,8 @@ import { AppUser } from "../utilities/utils"
 import { Database } from "../supabase"
 import { MainContext, SelectedShortcut } from "./context.types"
 import { errorToast } from "utilities/toasts"
+import { useImmer } from "use-immer"
+import { useChat } from "utilities/hooks"
 
 export const supabase = createClient<Database>(
   import.meta.env.VITE_SUPABASE_URL,
@@ -16,10 +18,25 @@ export const Context = createContext<MainContext>({} as any)
 
 const ContextProvider: FC<PropsWithChildren> = ({ children }) => {
   const [user, setUser] = useState<AppUser | null>(null)
+  const { chatState, initiateStream, setChatState } = useChat()
   const [selectedShortcut, setSelectedShortcut] = useState<SelectedShortcut>(null)
   return (
     <QueryClientProvider client={queryClient}>
-      <Context.Provider value={{ user, setUser, selectedShortcut, setSelectedShortcut }}>{children}</Context.Provider>
+      <Context.Provider
+        value={{
+          user,
+          setUser,
+          selectedShortcut,
+          setSelectedShortcut,
+          chat: {
+            state: chatState,
+            setState: setChatState,
+            initiateStream,
+          },
+        }}
+      >
+        {children}
+      </Context.Provider>
     </QueryClientProvider>
   )
 }
