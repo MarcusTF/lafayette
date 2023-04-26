@@ -14,12 +14,25 @@ export const supabase = createClient<Database>(
   import.meta.env.VITE_SUPABASE_ANON_KEY
 )
 export const queryClient = new QueryClient()
-export const Context = createContext<MainContext>({} as any)
+export const Context = createContext<MainContext>({
+  user: null,
+  setUser: () => {},
+  selectedShortcut: null,
+  setSelectedShortcut: () => {},
+  chat: {
+    state: { answer: "", messages: [], loading: false },
+    setState: () => {},
+    initiateStream: async (x, y) => {
+      errorToast("Stream not initialized", "error.stream-not-initialized")
+    },
+  },
+})
 
 const ContextProvider: FC<PropsWithChildren> = ({ children }) => {
   const [user, setUser] = useState<AppUser | null>(null)
-  const { chatState, initiateStream, setChatState } = useChat()
+  const { chatState, initiateStream, setChatState } = useChat(user)
   const [selectedShortcut, setSelectedShortcut] = useState<SelectedShortcut>(null)
+
   return (
     <QueryClientProvider client={queryClient}>
       <Context.Provider

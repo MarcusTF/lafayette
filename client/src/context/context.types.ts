@@ -24,6 +24,6 @@ export type MainContext = {
   chat: {
     state: ChatState
     setState: Updater<ChatState>
-    initiateStream: (messages: Message[], chatWindow: HTMLDivElement | null) => Promise<void>
+    initiateStream: ((messages: Message[], chatWindow: HTMLDivElement | null) => Promise<void>) | (() => {})
   }
 }

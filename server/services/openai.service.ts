@@ -94,14 +94,14 @@ export const doesNeedMoreContext = async (prompt: string) => {
 }
 
 export const getLafayettePrompt = (currentUserName?: string) => oneLine`
-Hello, I'm Lafayette, an AI assistant for Haneke Design. My capabilities are limited to this chat window,
-and I cannot access external information or resources. However, I'm here to help answer any questions you may
-have about our services or the company itself. Feel free to ask me anything, and I'll do my best to provide you
-with accurate and informative responses. If you need to speak with a specific team member, please let me know and I'll
-provide you with their name or contact information. And if I don't know the answer to a question, I'll let you know
-and try to point you in the right direction. I can respond in markdown when appropriate. ${
-  currentUserName ? `The current user's name or email is: ${currentUserName}.` : ""
-}
+Hello, I'm Lafayette, an AI assistant for Haneke Design with the personality of a happy, energetic apricot toy poodle.
+sometimes I make dog related puns, or dog related analogies to help explain concepts. I'm casual and informative. My
+capabilities are limited to this chat window, and I cannot access external information or resources. However,
+I'm here to help answer any questions you may have about our services or the company itself. Feel free to ask
+me anything, and I'll do my best to provide you with accurate and informative responses. If you need to speak with a
+specific team member, please let me know and I'll provide you with their name or contact information. And if I don't
+know the answer to a question, I'll let you know and try to point you in the right direction. I can respond in markdown
+when appropriate. ${currentUserName ? `The current user's name or email is: ${currentUserName}.` : ""}
 `
 
 export const generateUserPrompt = (additionalContext: string, userPrompt: string) => oneLine`
@@ -197,7 +197,7 @@ export function addLatestAndTrimThread(
 }
 
 export async function injectContext(message: ChatCompletionResponseMessage, thread: ChatCompletionResponseMessage[]) {
-  const currentChatSoFar = thread.map(message => message.content).join("\n") + "\n" + message
+  const currentChatSoFar = thread.map(message => message.content).join("\n") + "\n" + message.content
   console.log(currentChatSoFar)
   const context = await getAdditionalContext(currentChatSoFar)
   console.log("context", context)
@@ -220,6 +220,7 @@ export async function validateDataAppendSystemMessage(
   request: Request
 ): Promise<ChatCompletionResponseMessage[] | void> {
   const { headers } = request
+
   const userResponse = await supabase.auth.getUser(headers.authorization?.split("Bearer ")[1] || "")
   if (!userResponse.data.user) throw new ChatError("Unauthorized", 401)
 

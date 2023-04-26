@@ -19,18 +19,18 @@ type FormValues = {
 }
 
 const Chat: FC = () => {
-  const { user, chat } = useContexts()
+  const { user, chat: chatContext } = useContexts()
   const avatar = (user?.identities?.[0].identity_data?.avatar_url as string) || SlackLogo
   const chatRef = useRef<HTMLDivElement>(null)
 
-  const onSubmit: FormProps<FormValues>["onSubmit"] = ({ chat: content }, { change }) => {
+  const onSubmit: FormProps<FormValues>["onSubmit"] = ({ chat }, { change }) => {
     if (!chat) return void toast.warning("Please enter a message", { toastId: "error.no-message" })
-    const messages = [...chat.state.messages, { content, role: "user" } as Message]
-    chat.setState(state => {
+    const messages = [...chatContext.state.messages, { content: chat, role: "user" } as Message]
+    chatContext.setState(state => {
       state.messages = messages
       state.loading = true
     })
-    chat.initiateStream(messages, chatRef.current)
+    chatContext.initiateStream(messages, chatRef.current)
     change("chat", "")
     chatRef.current?.scrollTo(0, chatRef.current.scrollHeight)
   }
@@ -44,7 +44,7 @@ const Chat: FC = () => {
         <Loader text='Loading...' loading={isLoading}>
           <div className='chat'>
             <div className='messages' ref={chatRef}>
-              {chat.state.messages.map((message, index) => (
+              {chatContext.state.messages.map((message, index) => (
                 <div className={`chatblock chatblock--${message.role}`} key={index}>
                   {message.role === "assistant" && (
                     <img src={Lafayette} alt='Lafayette' className='avatar avatar--lafayette' />
@@ -78,7 +78,7 @@ const Chat: FC = () => {
                   )}
                 </div>
               ))}
-              <Loader text='Thinking...' loading={chat.state.loading}></Loader>
+              <Loader text='Thinking...' loading={chatContext.state.loading} animation={1}></Loader>
             </div>
             <div className='input'>
               <Form<FormValues> onSubmit={onSubmit}>

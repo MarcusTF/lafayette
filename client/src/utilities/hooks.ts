@@ -1,7 +1,7 @@
 import { MutationFunction, UseMutationOptions, UseQueryOptions, useMutation, useQuery } from "@tanstack/react-query"
 import { PostgrestError } from "@supabase/supabase-js"
 import { SSE } from "sse.js"
-import { useCallback, useContext, useEffect, useState } from "react"
+import { useCallback, useContext, useEffect, useMemo, useState } from "react"
 import { useImmer, Updater } from "use-immer"
 import axios from "axios"
 
@@ -86,14 +86,17 @@ export const useGetShortcutIds = (options?: UseQueryOptions<ShortcutResponse>) =
 }
 
 export const useGetSession = (options?: UseQueryOptions<AppUser>) => {
-  const { setUser } = useContext(Context)
+  const { setUser } = useContexts()
 
   const getSession = async () => {
     const { data, error } = await supabase.auth.getSession()
-    if (error) throw error
+
+    console.log(data, error)
 
     if (data?.session) {
       const parsed = parseSession(data.session)
+      console.log(parsed)
+      setUser(parsed)
       return parsed
     }
     throw new Error("No session")
@@ -104,6 +107,10 @@ export const useGetSession = (options?: UseQueryOptions<AppUser>) => {
     onSuccess: data => {
       setUser(data)
       if (options && "onSuccess" in options && typeof options.onSuccess === "function") options.onSuccess(data)
+    },
+    onError: error => {
+      errorToast("Error fetching Session", "error.supabase-session")
+      console.error(error)
     },
   })
 }
@@ -195,8 +202,7 @@ function handleError<T>(error: T, setChatState: Updater<ChatState>) {
   errorToast("Something went wrong!", "error.chat")
 }
 
-export const useChat = () => {
-  const { user } = useContext(Context)
+export const useChat = (user: AppUser | null) => {
   const [chatState, setChatState] = useImmer<ChatState>({
     messages: JSON.parse(localStorage.getItem("messages") || "[]") as Message[],
     loading: false,
@@ -222,8 +228,8 @@ export const useChat = () => {
       console.log("open")
     }
 
-    eventSource.onerror = () => {
-      console.error("error")
+    eventSource.onerror = event => {
+      console.error(event)
       errorToast("Something went wrong!", "error.chat")
       setChatState(draft => void (draft.loading = false))
       eventSource.close()
@@ -261,7 +267,7 @@ export const useChat = () => {
     eventSource.stream()
   }
 
-  return { setChatState, chatState, initiateStream }
+  return useMemo(() => ({ setChatState, chatState, initiateStream }), [chatState, setChatState, user])
 }
 
 export const useFetchSyntaxHighlighter = () => {
@@ -275,13 +281,9 @@ export const useFetchSyntaxHighlighter = () => {
 }
 
 export const useColorizer = () => {
-  const [color, setColor] = useImmer({
-    h: 208,
-    s: 92,
-    l: 20,
-    hsl: "hsl(208, 92%, 20%)",
-    hex: "043763",
-  })
+  const storedColor = Color(localStorage.getItem("color") || "#043763")
+  const [h, s, l] = storedColor.hsl().array()
+  const [color, setColor] = useImmer({ h, s, l, hsl: `hsl(${h}, ${s}%, ${l}%)`, hex: storedColor.hex() })
   const root = document.documentElement
   useEffect(() => {
     setColor(draft => {

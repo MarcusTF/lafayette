@@ -10,7 +10,6 @@ import {
 
 const post: RequestHandler = async (request, response) => {
   try {
-    response.setHeader("Access-Control-Allow-Origin", "*")
     response.setHeader("Content-Type", "text/event-stream")
     response.setHeader("Cache-Control", "no-cache")
     response.setHeader("Connection", "keep-alive")
