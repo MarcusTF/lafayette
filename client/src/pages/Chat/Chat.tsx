@@ -35,7 +35,7 @@ const Chat: FC = () => {
     chatRef.current?.scrollTo(0, chatRef.current.scrollHeight)
   }
 
-  const { SyntaxHighlight, style, isLoading, error } = useFetchSyntaxHighlighter()
+  const { SyntaxHighlight, style, isLoading } = useFetchSyntaxHighlighter()
 
   return (
     <div className='dashboard'>
