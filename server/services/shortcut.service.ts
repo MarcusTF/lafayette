@@ -1,10 +1,10 @@
 import type { User } from "@supabase/supabase-js"
 
 import axios from "axios"
-import { array, assert, is } from "superstruct"
+import { array, is } from "superstruct"
 
 import { ShortcutMember, SupabaseDatabase, WorkspaceRes } from "types"
-import { ShortcutMemberStruct, WorkspaceResStruct, isShortcutMember, isShortcutMemberArray } from "guards"
+import { WorkspaceResStruct, isShortcutMember } from "guards"
 import supabase from "./supabase.service"
 
 export const updateShortcutUsers = async (): Promise<[string, ResponseInit]> => {
@@ -47,7 +47,14 @@ export const updateShortcutUsers = async (): Promise<[string, ResponseInit]> => 
           status: 200,
         },
       ]
-
+    const slackUsers = shortcutMembers.flatMap(({ slack_id }) => {
+      if (slack_id) return [{ id: slack_id }]
+      return []
+    })
+    const { error: slackError } = await supabase
+      .from("slack_user")
+      .upsert(slackUsers, { onConflict: "id", ignoreDuplicates: true })
+    if (slackError) throw slackError
     const { error } = await supabase
       .from("shortcut_user")
       .upsert(shortcutMembers, { onConflict: "id", ignoreDuplicates: false })

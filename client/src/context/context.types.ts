@@ -1,5 +1,7 @@
 import { Match } from "pages/NotFound/NotFound.types"
 import { Dispatch, SetStateAction } from "react"
+import { Updater } from "use-immer"
+import { ChatState, Message } from "utilities/hooks.types"
 import { ShortcutMember } from "utilities/types"
 import { AppUser } from "utilities/utils"
 
@@ -18,6 +20,10 @@ export type MainContext = {
   user: AppUser | null
   setUser: Dispatch<SetStateAction<AppUser | null>>
   selectedShortcut: SelectedShortcut
-
   setSelectedShortcut: Dispatch<SetStateAction<SelectedShortcut>>
+  chat: {
+    state: ChatState
+    setState: Updater<ChatState>
+    initiateStream: ((messages: Message[], chatWindow: HTMLDivElement | null) => Promise<void>) | (() => {})
+  }
 }

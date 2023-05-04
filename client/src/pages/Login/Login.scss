@@ -16,6 +16,11 @@
     gap: 0.25rem;
     align-items: center;
     justify-content: center;
+    background-color: #fff;
+    .header__title,
+    .header__subtitle {
+      color: #000;
+    }
   }
 
   &__main {

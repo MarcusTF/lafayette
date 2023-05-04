@@ -12,7 +12,7 @@ if (process.env.NODE_ENV !== "production")
 import { corsOptions, helmetOptions, port, rateLimitOptions } from "./constants"
 import { updateShortcutUsers } from "services/shortcut.service"
 import morgan from "morgan"
-import routes from "./routes/v1/v1.routes"
+import routes from "routes/routes"
 
 updateShortcutUsers()
 

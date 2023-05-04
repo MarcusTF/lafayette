@@ -23,7 +23,9 @@ import {
   refine,
   is,
   intersection,
+  enums,
 } from "superstruct"
+import { ChatCompletionRequestMessage } from "openai"
 
 const SlackUserStruct: Describe<WRSlackUser> = nullable(
   object({
@@ -145,33 +147,6 @@ export const ShortcutMemberStruct = type({
   updated_at: string(),
 })
 
-interface RootObject {
-  created_at: string
-  created_without_invite: boolean
-  disabled: boolean
-  entity_type: string
-  global_id: string
-  group_ids: string[]
-  id: string
-  profile: Profile
-  role: string
-  state: string
-  updated_at: string
-}
-
-interface Profile {
-  entity_type: string
-  deactivated: boolean
-  two_factor_auth_activated: boolean
-  mention_name: string
-  name: string
-  gravatar_hash: string
-  id: string
-  display_icon?: any
-  is_owner: boolean
-  email_address: string
-}
-
 export const isShortcutMember = (data: unknown): data is ShortcutMember => ShortcutMemberStruct.is(data)
 export const isShortcutMemberArray = (data: unknown): data is ShortcutMember[] => array(ShortcutMemberStruct).is(data)
 
@@ -188,4 +163,10 @@ export const MentionStruct: Describe<Mention> = type({
   slackUser: SlackUserStruct,
   shortcutUser: ShortcutUserStructSingle,
   author: string(),
+})
+
+export const OpenAIMessageStruct: Describe<ChatCompletionRequestMessage> = type({
+  role: enums(["user", "system", "assistant"]),
+  content: string(),
+  name: optional(string()),
 })

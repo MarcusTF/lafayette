@@ -1,0 +1,3 @@
+export const MAX_CONTEXT_TOKENS = 1000
+export const MAX_RESPONSE_TOKENS = 1000
+export const MAX_TOTAL_TOKENS = 4000

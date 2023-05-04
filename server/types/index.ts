@@ -3,6 +3,43 @@ export type Json = string | number | boolean | null | { [key: string]: Json } | 
 export interface Database {
   public: {
     Tables: {
+      haneke: {
+        Row: {
+          body: string
+          embedding: string | null
+          id: string
+          title: string
+        }
+        Insert: {
+          body: string
+          embedding?: string | null
+          id?: string
+          title: string
+        }
+        Update: {
+          body?: string
+          embedding?: string | null
+          id?: string
+          title?: string
+        }
+      }
+      roles: {
+        Row: {
+          id: string
+          role: string | null
+          user_id: string | null
+        }
+        Insert: {
+          id?: string
+          role?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          id?: string
+          role?: string | null
+          user_id?: string | null
+        }
+      }
       shortcut_user: {
         Row: {
           id: string
@@ -65,7 +102,19 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      vector_search: {
+        Args: {
+          vector: number[]
+          entries: number
+        }
+        Returns: {
+          id: string
+          title: string
+          body: string
+          distance: number
+          similarity: number
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
