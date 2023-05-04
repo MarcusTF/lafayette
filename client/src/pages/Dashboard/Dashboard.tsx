@@ -47,13 +47,20 @@ const Dashboard = () => {
     onSuccess: data => {
       if (!ShortcutResponseStruct.is(data)) {
         errorToast("The server returned an unexpected response.", "error.server")
+        setRoute("error")
         try {
           ShortcutResponseStruct.assert(data)
         } catch (e) {
           console.error(e)
         }
       }
-      if (data.every(({ bestGuess }) => bestGuess === null)) setRoute("notFound")
+      if (
+        data.every(
+          ({ bestGuess }) =>
+            !bestGuess?.profile?.mention_name || !bestGuess?.profile?.email_address || !bestGuess?.profile?.name
+        )
+      )
+        setRoute("notFound")
       else setRoute("found")
     },
   })

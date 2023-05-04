@@ -2,7 +2,7 @@ import { MutationFunction } from "@tanstack/react-query"
 
 export type SetupSyncVariables = {
   slackId: string | undefined
-  shortcutIds: (string | undefined)[] | undefined
+  shortcutIds: [string | undefined, string | undefined][] | undefined
   id: string | undefined
 }
 
