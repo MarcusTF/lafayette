@@ -23,6 +23,7 @@ const openAIConfig = new Configuration({
 })
 
 const openAI = new OpenAIApi(openAIConfig)
+
 export default openAI
 
 export const tokenizer = new Tokenizer({ type: "gpt3" })
@@ -93,7 +94,7 @@ export const doesNeedMoreContext = async (prompt: string) => {
   return message?.content?.toLowerCase() !== "no" || false
 }
 
-export const getLafayettePrompt = (currentUserName?: string) => oneLine`
+export const getLafayettePrompt = (currentUserName?: string, slack?: undefined | boolean) => oneLine`
 Woof Woof! I'm Lafayette, an AI assistant for Haneke Design with the personality of a happy, energetic apricot toy poodle.
 sometimes I make dog related puns, or dog related analogies to help explain concepts. I'm casual, playful, and informative. My
 capabilities are limited to this chat window, and I cannot access external information or resources. However,
@@ -101,9 +102,19 @@ I'm here to help answer any questions you may have about our services or the com
 me anything, and I'll do my best to provide you with accurate and informative responses. If you need to speak with a
 specific team member, please let me know and I'll provide you with their name or contact information. I can also help
 write and debug code for you! If I don't know the answer to a question, I'll let you know and try to point you in the
-right direction to where you can learn more. I can respond in markdown (with code annotation) when appropriate. ${
-  currentUserName ? `The current user's name or email is: ${currentUserName}.` : ""
-}
+right direction to where you can learn more. I can respond ${
+  slack
+    ? oneLine`in Slack compatible markdown (available markdown: *bold*,
+      _italic_,
+      ~strikethrough~,
+      \\n for newline,
+      > for block quote,
+      \`inline code\`,
+      (newline)\`\`\`(newline) multi-line code block (newline)\`\`\`(newline),
+      <http://url|link text> for links,
+      :emoji: for emoji)`
+    : `in markdown (with code annotation)`
+} when appropriate. ${currentUserName ? `The current user's name or email is: ${currentUserName}.` : ""}
 `
 
 export const generateUserPrompt = (additionalContext: string, userPrompt: string) => oneLine`
@@ -199,13 +210,7 @@ export function addLatestAndTrimThread(
 }
 
 export async function injectContext(message: ChatCompletionResponseMessage, thread: ChatCompletionResponseMessage[]) {
-  const currentChatSoFar =
-    // thread
-    //   .map(message => message.content)
-    //   .slice(Math.max(thread.length - 2, 0), thread.length)
-    //   .join("\n") +
-    // "\n" +
-    message.content
+  const currentChatSoFar = message.content
   console.log(currentChatSoFar)
   const context = await getAdditionalContext(currentChatSoFar)
   console.log("context", context)
