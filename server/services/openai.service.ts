@@ -287,8 +287,8 @@ export const getAdditionalContext = async (prompt: string) => {
 
   if (!data?.length) return ""
 
-  let context = ""
-  let tokens = 0
+  let context = "The user cannot see this context, it has been added to the prompt. "
+  let tokens = countTokens(context)
   let index = 0
 
   for (const result of data) {
