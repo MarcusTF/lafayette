@@ -51,7 +51,7 @@
   ],
   "theme_color": "#f79f3f",
   "background_color": "#f79f3f",
-  "start_url": "https://chat.lafayette.com/login",
+  "start_url": "https://chat.lafayette.com/",
   "display": "standalone",
   "screenshots": [
     {
