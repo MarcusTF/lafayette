@@ -7,7 +7,7 @@ import {
 } from "openai"
 import Tokenizer from "gpt3-tokenizer"
 import { oneLine } from "common-tags"
-import produce from "immer"
+import { produce } from "immer"
 import { MAX_CONTEXT_TOKENS, MAX_RESPONSE_TOKENS, MAX_TOTAL_TOKENS } from "constants/openai.constants"
 import { Request, Response } from "express"
 import supabase, { searchSupabaseVectors } from "./supabase.service"

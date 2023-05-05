@@ -10,12 +10,12 @@ type Props = {
   mode: "main" | "chatbot"
 }
 
-function getRedirectURL(mode: string): string {
+function getRedirectURL(mode: "main" | "chatbot", url?: string): string {
   if (typeof import.meta.env.VITE_APP_URL !== "string") return ""
-  const appUrl = import.meta.env.VITE_APP_URL,
+  const appUrl = url || import.meta.env.VITE_APP_URL,
     appUrlParts = appUrl?.split("://"),
     protocol = appUrlParts?.[0],
-    domain = appUrlParts?.[1],
+    domain = appUrlParts?.[1]?.split("/")?.[0] || appUrlParts?.[1],
     main = `${protocol}://${domain}/login`,
     chatbot = `${protocol}://chat.${domain}/login`
 

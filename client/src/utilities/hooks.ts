@@ -23,7 +23,6 @@ type ShortcutInsert = Database["public"]["Tables"]["shortcut_user"]["Insert"]
 export const useGetWorkspaces = (options?: UseQueryOptions<Workspace[]>) => {
   const getWorkspaces = async () => {
     const { data, error, status, statusText } = await supabase.from("shortcut_workspaces").select()
-    console.log(status, statusText)
     if (error) throw error
     return data
   }
@@ -88,15 +87,14 @@ export const useGetSession = (options?: UseQueryOptions<AppUser>) => {
 
   const getSession = async () => {
     const { data, error } = await supabase.auth.getSession()
-
-    console.log(data, error)
+    if (error) console.error(error)
 
     if (data?.session) {
       const parsed = parseSession(data.session)
-      console.log(parsed)
       setUser(parsed)
       return parsed
     }
+
     throw new Error("No session")
   }
 
@@ -107,7 +105,7 @@ export const useGetSession = (options?: UseQueryOptions<AppUser>) => {
       if (options && "onSuccess" in options && typeof options.onSuccess === "function") options.onSuccess(data)
     },
     onError: error => {
-      errorToast("Error fetching Session", "error.supabase-session")
+      if (error instanceof Error && error.message === "No session") return setUser(null)
       console.error(error)
     },
   })
