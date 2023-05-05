@@ -50,7 +50,7 @@
     }
   ],
   "theme_color": "#7C6135",
-  "background_color": "#f79f3f",
+  "background_color": "#7C6135",
   "start_url": "/login",
   "display": "standalone",
   "screenshots": [
