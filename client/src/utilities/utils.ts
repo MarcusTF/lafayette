@@ -1,5 +1,4 @@
 import { Session } from "@supabase/supabase-js"
-import { produce } from "immer"
 
 export const parseSession = (session: Session) => ({
   ...session.user,

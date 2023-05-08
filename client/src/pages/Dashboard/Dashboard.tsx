@@ -1,15 +1,16 @@
 import { createContext, useState } from "react"
 
-import {
+import { Header, Loader, UserFlow } from "components"
+import { ShortcutResponseStruct } from "utilities/guards"
+import { useGetShortcutIds, useGetSlackUserSupabase } from "utilities/hooks"
+import { errorToast } from "utilities/toasts"
+
+import type {
   LoadingDispatchSetState,
   UserFlowContextType,
   UserFlowDispatchSetState,
   UserFlowRoutes,
 } from "./Dashboard.types"
-import { Loader, UserFlow, Header } from "components"
-import { ShortcutResponseStruct } from "utilities/guards"
-import { errorToast } from "utilities/toasts"
-import { useGetShortcutIds, useGetSlackUserSupabase, useMainContext } from "utilities/hooks"
 
 import "./Dashboard.scss"
 

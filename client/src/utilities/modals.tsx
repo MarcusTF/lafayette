@@ -1,5 +1,9 @@
-import ReactModal from "react-modal"
+import { useState } from "react"
+import Color from "color"
 import capitalize from "lodash.capitalize"
+import ReactModal from "react-modal"
+
+import { /* useAddNewWorkspace */ useColorizer, useContexts, useGetWorkspaces } from "./hooks"
 
 import type {
   AddWorkspaceModalFC,
@@ -11,14 +15,11 @@ import type {
 } from "./modals.types"
 
 import "./modals.scss"
-import { useAddNewWorkspace, useColorizer, useContexts, useGetWorkspaces } from "./hooks"
-import { FC, useState } from "react"
-import Color from "color"
 
 export const WorkspacesModal: WorkspacesModalFC = ({ isOpen, setIsOpen }) => {
-  const [isOpen2, setIsOpen2] = useState<boolean>(false)
+  const [localIsOpen, localSetIsOpen] = useState<boolean>(false)
   const { data } = useGetWorkspaces()
-  const { mutate } = useAddNewWorkspace()
+  // const { mutate } = useAddNewWorkspace()
 
   return (
     <ReactModal
@@ -39,7 +40,7 @@ export const WorkspacesModal: WorkspacesModalFC = ({ isOpen, setIsOpen }) => {
           ))}
         </ul>
         <div className='actions'>
-          <button className='button button--confirm button--add-workspace' onClick={() => setIsOpen2(v => !v)}>
+          <button className='button button--confirm button--add-workspace' onClick={() => localSetIsOpen(v => !v)}>
             Add Workspace
           </button>
           <button className='button button--wrong' onClick={() => setIsOpen(v => !v)}>
@@ -47,7 +48,7 @@ export const WorkspacesModal: WorkspacesModalFC = ({ isOpen, setIsOpen }) => {
           </button>
         </div>
       </div>
-      <AddWorkspaceModal isOpen={isOpen2} setIsOpen={setIsOpen2} />
+      <AddWorkspaceModal isOpen={localIsOpen} setIsOpen={localSetIsOpen} />
     </ReactModal>
   )
 }
@@ -74,7 +75,7 @@ export const AddWorkspaceModal: AddWorkspaceModalFC = ({ isOpen, setIsOpen }) =>
   const isOpen2 = helpState.isOpen
   const toggleOpen = () => setHelpState(helpState => ({ ...helpState, isOpen: !helpState.isOpen }))
 
-  const { mutate } = useAddNewWorkspace()
+  // const { mutate } = useAddNewWorkspace()
 
   return (
     <ReactModal

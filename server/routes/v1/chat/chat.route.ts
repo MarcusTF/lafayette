@@ -1,5 +1,6 @@
-import e from "express"
 import cors from "cors"
+import e from "express"
+
 import chat from "./chat.controller"
 
 const router = e.Router()

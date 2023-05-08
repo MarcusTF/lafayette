@@ -1,9 +1,10 @@
-import { useContexts } from "utilities/hooks"
 import capitalize from "lodash.capitalize"
-import { HanekeIcon, Lafayette, ShortcutIcon } from "assets"
 
-import "./Found.scss"
 import { SelectedShortcut } from "context/context.types"
+import { useContexts } from "utilities/hooks"
+
+import { HanekeIcon, Lafayette, ShortcutIcon } from "assets"
+import "./Found.scss"
 
 const Found = () => {
   const { shortcut, setRoute, selectedShortcut } = useContexts()

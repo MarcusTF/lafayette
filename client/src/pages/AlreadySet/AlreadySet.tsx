@@ -1,15 +1,12 @@
 import { useState } from "react"
-import Modal from "react-modal"
 
 import { useUndoSync } from "utilities/hooks"
+import { ConfirmModal } from "utilities/modals"
 
 import { Lafayette } from "assets"
 import "./AlreadySet.scss"
-import { ConfirmModal } from "utilities/modals"
 
-type Props = {}
-
-const AlreadySet = (props: Props) => {
+const AlreadySet = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const { mutate: undoSync } = useUndoSync({
     onSuccess: () => {

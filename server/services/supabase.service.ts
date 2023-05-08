@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js"
-import { Database } from "types"
+
+import type { Database } from "types"
 
 if (!process.env.SLACK_SIGNING_SECRET) throw new Error("Missing SLACK_SIGNING_SECRET")
 if (!process.env.SUPABASE_URL) throw new Error("Missing SUPABASE_URL")

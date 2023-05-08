@@ -1,17 +1,15 @@
-import { FC, useContext, useRef } from "react"
-import { Field, Form, useForm } from "react-final-form"
-import { Header, Loader } from "components"
-import { Message } from "utilities/hooks.types"
-import { SlackIcon as SlackLogo } from "assets"
-import { toast } from "react-toastify"
-import { useColorizer, useContexts, useFetchSyntaxHighlighter } from "utilities/hooks"
-import ReactMarkdown from "react-markdown"
-
+import { FC, useRef } from "react"
 import type { FormProps } from "react-final-form"
+import { Field, Form } from "react-final-form"
+import ReactMarkdown from "react-markdown"
+import { toast } from "react-toastify"
 
+import { Header, Loader } from "components"
 import SendIcon from "components/SendIcon"
+import { useContexts, useFetchSyntaxHighlighter } from "utilities/hooks"
+import { Message } from "utilities/hooks.types"
 
-import { Lafayette } from "assets"
+import { Lafayette, SlackIcon as SlackLogo } from "assets"
 import "./Chat.scss"
 
 type FormValues = {

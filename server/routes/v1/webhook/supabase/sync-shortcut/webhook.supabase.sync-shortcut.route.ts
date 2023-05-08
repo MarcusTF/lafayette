@@ -1,5 +1,6 @@
-import e from "express"
 import cors from "cors"
+import e from "express"
+
 import syncShortcut from "./webhook.supabase.sync-shortcut.controller"
 
 const router = e.Router()

@@ -1,16 +1,12 @@
 import { useState } from "react"
-import ReactModal from "react-modal"
 
-export { default as AllSet } from "./AllSet"
 import { useUndoSync } from "utilities/hooks"
+import { ConfirmModal } from "utilities/modals"
 
 import { Lafayette } from "assets"
 import "./AllSet.scss"
-import { ConfirmModal } from "utilities/modals"
 
-type Props = {}
-
-const AllSet = (props: Props) => {
+const AllSet = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const { mutate: undoSync } = useUndoSync({
     onSuccess: () => {

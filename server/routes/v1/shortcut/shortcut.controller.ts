@@ -1,5 +1,6 @@
-import { fetchShortcutMembers, updateShortcutUsers } from "services/shortcut.service"
 import { RequestHandler } from "express"
+
+import { fetchShortcutMembers } from "services/shortcut.service"
 import supabase from "services/supabase.service"
 
 const get: RequestHandler = async (req, res) => {

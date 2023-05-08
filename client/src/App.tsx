@@ -1,11 +1,11 @@
+import Modal from "react-modal"
 import { Route, Routes } from "react-router-dom"
 import { ToastContainer } from "react-toastify"
-import Modal from "react-modal"
 
-import { Login, Chat, Dashboard } from "pages"
-import { getDomainParts } from "utilities/utils"
+import { Chat, Dashboard, Login } from "pages"
 import { useGetSession, useWatchAuthChanges } from "utilities/hooks"
 import PrivateRoute from "utilities/PrivateRoute"
+import { getDomainParts } from "utilities/utils"
 
 import "./App.scss"
 import "react-toastify/dist/ReactToastify.css"

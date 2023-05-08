@@ -1,10 +1,11 @@
+import { useState } from "react"
+import ReactModal from "react-modal"
+import capitalize from "lodash.capitalize"
+
 import { useContexts, useSetupSync } from "utilities/hooks"
 
-import ReactModal from "react-modal"
-import { HanekeIcon, ShortcutIcon, SlackIcon, Lafayette } from "assets"
+import { HanekeIcon, Lafayette, ShortcutIcon, SlackIcon } from "assets"
 import "./Confirm.scss"
-import { useState } from "react"
-import capitalize from "lodash.capitalize"
 
 const Confirm = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -18,7 +19,7 @@ const Confirm = () => {
       setRoute("allSet")
       setLoading(false)
     },
-    onError: error => {
+    onError: () => {
       setRoute("error")
       setLoading(false)
     },

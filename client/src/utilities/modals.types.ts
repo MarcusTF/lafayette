@@ -1,7 +1,7 @@
-import { UseMutateFunction, UseQueryResult } from "@tanstack/react-query"
 import { Dispatch, FC, SetStateAction } from "react"
+import { UseMutateFunction, UseQueryResult } from "@tanstack/react-query"
+
 import { ShortcutResponse } from "./types"
-import { ChatState } from "./hooks.types"
 
 export type WorkspacesModalFC = FC<{
   isOpen: boolean

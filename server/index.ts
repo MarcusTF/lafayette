@@ -1,18 +1,19 @@
 import cors from "cors"
 import express from "express"
-import helmet, { HelmetOptions } from "helmet"
-import path from "path"
 import rateLimit from "express-rate-limit"
+import helmet from "helmet"
+import morgan from "morgan"
+import path from "path"
+import routes from "routes/routes"
+
+import { updateShortcutUsers } from "services/shortcut.service"
+
+import { corsOptions, helmetOptions, port, rateLimitOptions } from "./constants"
 
 if (process.env.NODE_ENV !== "production")
   require("dotenv").config({
     path: path.join(__dirname, "..", "..", "backend.env"),
   })
-
-import { corsOptions, helmetOptions, port, rateLimitOptions } from "./constants"
-import { updateShortcutUsers } from "services/shortcut.service"
-import morgan from "morgan"
-import routes from "routes/routes"
 
 updateShortcutUsers()
 

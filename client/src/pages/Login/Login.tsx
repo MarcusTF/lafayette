@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom"
 
 import { supabase } from "context/context"
 
-import { SlackIcon, Lafayette } from "assets"
+import { Lafayette, SlackIcon } from "assets"
 import "./Login.scss"
 
 type Props = {
