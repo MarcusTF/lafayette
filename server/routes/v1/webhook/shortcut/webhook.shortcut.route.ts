@@ -1,5 +1,6 @@
-import e from "express"
 import cors from "cors"
+import e from "express"
+
 import webhookShortcut from "./webhook.shortcut.controller"
 
 const router = e.Router()

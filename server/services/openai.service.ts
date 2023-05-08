@@ -1,19 +1,21 @@
+import { AxiosResponse } from "axios"
+import { oneLine } from "common-tags"
+import { Request, Response } from "express"
+import Tokenizer from "gpt3-tokenizer"
+import { OpenAIMessageStruct } from "guards"
+import { produce } from "immer"
 import {
   ChatCompletionRequestMessage,
+  ChatCompletionResponseMessage,
   Configuration,
   CreateChatCompletionRequest,
-  ChatCompletionResponseMessage,
   OpenAIApi,
 } from "openai"
-import Tokenizer from "gpt3-tokenizer"
-import { oneLine } from "common-tags"
-import { produce } from "immer"
-import { MAX_CONTEXT_TOKENS, MAX_RESPONSE_TOKENS, MAX_TOTAL_TOKENS } from "constants/openai.constants"
-import { Request, Response } from "express"
-import supabase, { searchSupabaseVectors } from "./supabase.service"
-import { OpenAIMessageStruct } from "guards"
 import { array, assert, is } from "superstruct"
-import { AxiosResponse } from "axios"
+
+import { MAX_CONTEXT_TOKENS, MAX_RESPONSE_TOKENS, MAX_TOTAL_TOKENS } from "constants/openai.constants"
+
+import supabase, { searchSupabaseVectors } from "./supabase.service"
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY
 if (!OPENAI_API_KEY) throw new Error("Missing OPENAI_API_KEY")
@@ -209,7 +211,7 @@ export function addLatestAndTrimThread(
   return finalMessageThread
 }
 
-export async function injectContext(message: ChatCompletionResponseMessage, thread: ChatCompletionResponseMessage[]) {
+export async function injectContext(message: ChatCompletionResponseMessage, _thread: ChatCompletionResponseMessage[]) {
   const currentChatSoFar = message.content
   console.log(currentChatSoFar)
   const context = await getAdditionalContext(currentChatSoFar)

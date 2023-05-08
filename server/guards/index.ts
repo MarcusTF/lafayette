@@ -1,31 +1,15 @@
-import type {
-  WorkspaceRes,
-  ShortcutWebhookBody,
-  ShortcutMember,
-  WRSlackUser,
-  WRShortcutUser,
-  Mention,
-  Action,
-} from "types"
-import {
-  Describe,
-  array,
-  boolean,
-  nullable,
-  number,
-  object,
-  optional,
-  string,
-  union,
-  assert,
-  type,
-  literal,
-  refine,
-  is,
-  intersection,
-  enums,
-} from "superstruct"
 import { ChatCompletionRequestMessage } from "openai"
+import { array, boolean, Describe, enums, literal, nullable, number, object, optional, string, type } from "superstruct"
+
+import type {
+  Action,
+  Mention,
+  ShortcutMember,
+  ShortcutWebhookBody,
+  WorkspaceRes,
+  WRShortcutUser,
+  WRSlackUser,
+} from "types"
 
 const SlackUserStruct: Describe<WRSlackUser> = nullable(
   object({

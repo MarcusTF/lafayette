@@ -1,6 +1,6 @@
 import { FC, PropsWithChildren, useCallback } from "react"
-import { LoadAnimation, PuppySleep, PuppyWag } from "assets"
 
+import { LoadAnimation, PuppySleep, PuppyWag } from "assets"
 import "./Loader.scss"
 
 type Props = { text?: string; loading: boolean; animation?: 0 | 1 | 2 }

@@ -1,4 +1,5 @@
 import { RequestHandler } from "express"
+
 import { updateShortcutUsers } from "services/shortcut.service"
 
 const post: RequestHandler = async (_, res) => {

@@ -1,4 +1,5 @@
-import { Describe, array, boolean, nullable, object, string } from "superstruct"
+import { array, boolean, Describe, nullable, object, string } from "superstruct"
+
 import { Workspace } from "./webhook.shortcut.controller.types"
 
 export const WorkspaceStruct: Describe<Workspace> = object({

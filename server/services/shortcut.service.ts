@@ -1,10 +1,10 @@
 import type { User } from "@supabase/supabase-js"
-
 import axios from "axios"
+import { isShortcutMember, WorkspaceResStruct } from "guards"
 import { array, is } from "superstruct"
 
 import { ShortcutMember, SupabaseDatabase, WorkspaceRes } from "types"
-import { WorkspaceResStruct, isShortcutMember } from "guards"
+
 import supabase from "./supabase.service"
 
 export const updateShortcutUsers = async (): Promise<[string, ResponseInit]> => {

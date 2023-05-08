@@ -1,28 +1,28 @@
-import { MutationFunction, UseMutationOptions, UseQueryOptions, useMutation, useQuery } from "@tanstack/react-query"
+import { useContext, useEffect, useMemo } from "react"
 import { PostgrestError } from "@supabase/supabase-js"
-import { SSE } from "sse.js"
-import { useCallback, useContext, useEffect, useMemo, useState } from "react"
-import { useImmer, Updater } from "use-immer"
+import { MutationFunction, useMutation, UseMutationOptions, useQuery, UseQueryOptions } from "@tanstack/react-query"
 import axios from "axios"
-
-import { AppUser, getDomainParts, parseSession } from "./utils"
-import { ChatState, Message } from "./hooks.types"
-import { Context, supabase } from "context/context"
-import { Database } from "supabase"
-import { SetupSyncMutation, SetupSyncVariables } from "pages/Confirm/Confirm.types"
-import { ShortcutResponse } from "./types"
-import { UserFlowContext } from "pages"
-import { errorToast } from "./toasts"
 import Color from "color"
+import { SSE } from "sse.js"
+import { Updater, useImmer } from "use-immer"
 
-type SlackUser = Database["public"]["Tables"]["slack_user"]["Row"]
-type Workspace = Database["public"]["Tables"]["shortcut_workspaces"]["Row"]
-type WorkspaceInsert = Database["public"]["Tables"]["shortcut_workspaces"]["Insert"]
-type ShortcutInsert = Database["public"]["Tables"]["shortcut_user"]["Insert"]
+import { Context, supabase } from "context/context"
+import { UserFlowContext } from "pages"
+import { SetupSyncMutation, SetupSyncVariables } from "pages/Confirm/Confirm.types"
+
+import { ChatState, Message } from "./hooks.types"
+import { errorToast } from "./toasts"
+import { ShortcutResponse } from "./types"
+import { AppUser, parseSession } from "./utils"
+
+type SlackUser = SupabaseDB["public"]["Tables"]["slack_user"]["Row"]
+type Workspace = SupabaseDB["public"]["Tables"]["shortcut_workspaces"]["Row"]
+type WorkspaceInsert = SupabaseDB["public"]["Tables"]["shortcut_workspaces"]["Insert"]
+type ShortcutInsert = SupabaseDB["public"]["Tables"]["shortcut_user"]["Insert"]
 
 export const useGetWorkspaces = (options?: UseQueryOptions<Workspace[]>) => {
   const getWorkspaces = async () => {
-    const { data, error, status, statusText } = await supabase.from("shortcut_workspaces").select()
+    const { data, error } = await supabase.from("shortcut_workspaces").select()
     if (error) throw error
     return data
   }

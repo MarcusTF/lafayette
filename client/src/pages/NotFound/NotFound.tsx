@@ -1,14 +1,15 @@
 import { FC, useState } from "react"
 import { UseQueryResult } from "@tanstack/react-query"
+import capitalize from "lodash.capitalize"
 import groupBy from "lodash.groupby"
 
-import { ShortcutMember, ShortcutResponse } from "utilities/types"
 import { useContexts } from "utilities/hooks"
+import { ShortcutResponse } from "utilities/types"
+
+import { Match } from "./NotFound.types"
 
 import { Lafayette } from "assets"
 import "./NotFound.scss"
-import capitalize from "lodash.capitalize"
-import { Match } from "./NotFound.types"
 
 type Props = { isBadGuess?: boolean }
 const generateListOptions = (

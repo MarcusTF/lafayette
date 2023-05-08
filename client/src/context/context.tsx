@@ -1,15 +1,14 @@
-import { FC, PropsWithChildren, createContext, useState } from "react"
-
+import { createContext, FC, PropsWithChildren, useState } from "react"
+import { createClient } from "@supabase/supabase-js"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { PostgrestError, createClient } from "@supabase/supabase-js"
-import { AppUser } from "../utilities/utils"
-import { Database } from "../supabase"
-import { MainContext, SelectedShortcut } from "./context.types"
-import { errorToast } from "utilities/toasts"
-import { useImmer } from "use-immer"
-import { useChat } from "utilities/hooks"
 
-export const supabase = createClient<Database>(
+import { useChat } from "utilities/hooks"
+import { errorToast } from "utilities/toasts"
+
+import { AppUser } from "../utilities/utils"
+import { MainContext, SelectedShortcut } from "./context.types"
+
+export const supabase = createClient<SupabaseDB>(
   import.meta.env.VITE_SUPABASE_URL,
   import.meta.env.VITE_SUPABASE_ANON_KEY
 )
@@ -22,7 +21,7 @@ export const Context = createContext<MainContext>({
   chat: {
     state: { answer: "", messages: [], loading: false },
     setState: () => {},
-    initiateStream: async (x, y) => {
+    initiateStream: async (_x, _y) => {
       errorToast("Stream not initialized", "error.stream-not-initialized")
     },
   },

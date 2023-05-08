@@ -1,7 +1,8 @@
 import e from "express"
+
+import chat from "./chat/chat.route"
 import shortcut from "./shortcut/shortcut.route"
 import webhook from "./webhook/webhook.route"
-import chat from "./chat/chat.route"
 
 const routes = e.Router()
 

@@ -1,17 +1,18 @@
 import { FC, useState } from "react"
-import { SlackIcon } from "components"
-import { SlackIcon as SlackLogo } from "assets"
-import { useGetUserRole, useMainContext } from "utilities/hooks"
 
-import "./Header.scss"
+import { SlackIcon } from "components"
+import { useGetUserRole, useMainContext } from "utilities/hooks"
 import { ChatOptionsModal, WorkspacesModal } from "utilities/modals"
+
+import { SlackIcon as SlackLogo } from "assets"
+import "./Header.scss"
 
 type HeaderProps = {
   chat?: boolean
 }
 
 const Header: FC<HeaderProps> = ({ chat }) => {
-  const { user, chat: chatContext } = useMainContext()
+  const { user } = useMainContext()
   const { data: isAdmin } = useGetUserRole()
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const avatar = (user?.identities?.[0].identity_data?.avatar_url as string) || SlackLogo

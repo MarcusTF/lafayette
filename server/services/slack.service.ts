@@ -1,9 +1,10 @@
+import { App } from "@slack/bolt"
 import { stripIndents } from "common-tags"
 import capitalize from "lodash/capitalize"
 
-import { App } from "@slack/bolt"
-import { getQuip } from "utils"
 import { Mention } from "types"
+import { getQuip } from "utils"
+
 import { port, port2 } from "../constants"
 import supabase from "./supabase.service"
 
@@ -267,7 +268,7 @@ slack.event("app_home_opened", async ({ event, client, logger, context }) => {
     const info = await client.users.info({ user })
     const name = info.user?.profile?.real_name || "there"
     const isActive = await supabase.from("slack_user").select("active").eq("id", user).single()
-    const result = await client.views.publish({
+    await client.views.publish({
       user_id: user,
       view: {
         type: "home",

@@ -1,13 +1,14 @@
+import { User } from "@supabase/supabase-js"
 import { RequestHandler } from "express"
-
 import { ActionStruct, ShortcutWebhookBodyStruct, StoryActionStruct } from "guards"
+import { array } from "superstruct"
+
 import slack, { notifySlackUser } from "services/slack.service"
 import supabase from "services/supabase.service"
-import { WorkspaceStruct } from "./webhook.shortcut.controller.guards"
 import { Mention, ShortcutWebhookBody } from "types"
+
+import { WorkspaceStruct } from "./webhook.shortcut.controller.guards"
 import { Workspace } from "./webhook.shortcut.controller.types"
-import { User } from "@supabase/supabase-js"
-import { array } from "superstruct"
 
 // file deepcode ignore HTTPSourceWithUncheckedType: Superstruct guards the type.
 function reduceMentions(actions: ShortcutWebhookBody["actions"], workspace: Workspace, users: User[]) {
