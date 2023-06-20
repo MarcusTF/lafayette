@@ -3,6 +3,43 @@ export type Json = string | number | boolean | null | { [key: string]: Json } | 
 export interface Database {
   public: {
     Tables: {
+      haneke: {
+        Row: {
+          body: string
+          embedding: string | null
+          id: string
+          title: string
+        }
+        Insert: {
+          body: string
+          embedding?: string | null
+          id?: string
+          title: string
+        }
+        Update: {
+          body?: string
+          embedding?: string | null
+          id?: string
+          title?: string
+        }
+      }
+      roles: {
+        Row: {
+          id: string
+          role: string | null
+          user_id: string | null
+        }
+        Insert: {
+          id?: string
+          role?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          id?: string
+          role?: string | null
+          user_id?: string | null
+        }
+      }
       shortcut_user: {
         Row: {
           id: string
@@ -65,7 +102,19 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      vector_search: {
+        Args: {
+          vector: number[]
+          entries: number
+        }
+        Returns: {
+          id: string
+          title: string
+          body: string
+          distance: number
+          similarity: number
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
@@ -104,9 +153,9 @@ interface Reference {
   name: string
 }
 
-interface Action {
+export interface Action<T extends string | "story-comment" = string> {
   id: number
-  entity_type: string
+  entity_type: T
   action: string
   name?: string
   mention_ids?: string[]
@@ -140,7 +189,7 @@ interface Started {
 export const stringNumber = (value: unknown): number | undefined => {
   if (value === undefined) return undefined
   const number = Number(value)
-  if (isNaN(number)) return undefined
+  if (Number.isNaN(number)) return undefined
   return number
 }
 

@@ -1,17 +1,3 @@
-import axios from "axios"
-
-import {
-  Database,
-  Mention,
-  ShortcutMember,
-  ShortcutWebhookBody,
-  SlackIdentityData,
-  SupabaseDatabase,
-  WorkspaceRes,
-} from "types"
-import { User } from "@supabase/supabase-js"
-import { Workspace } from "routes/api/webhook/shortcut/webhook.shortcut.controller.types"
-
 const quips = [
   "Treat Please! 🦴",
   "I think it's time for belly rubs, you're not busy, right? 🐾",

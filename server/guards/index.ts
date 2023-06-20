@@ -1,5 +1,15 @@
-import type { WorkspaceRes, ShortcutWebhookBody, ShortcutMember, WRSlackUser, WRShortcutUser } from "types"
-import { Describe, array, boolean, nullable, number, object, optional, string, union, assert, type } from "superstruct"
+import { ChatCompletionRequestMessage } from "openai"
+import { array, boolean, Describe, enums, literal, nullable, number, object, optional, string, type } from "superstruct"
+
+import type {
+  Action,
+  Mention,
+  ShortcutMember,
+  ShortcutWebhookBody,
+  WorkspaceRes,
+  WRShortcutUser,
+  WRSlackUser,
+} from "types"
 
 const SlackUserStruct: Describe<WRSlackUser> = nullable(
   object({
@@ -9,15 +19,13 @@ const SlackUserStruct: Describe<WRSlackUser> = nullable(
   })
 )
 
-const ShortcutUserStruct: Describe<WRShortcutUser> = nullable(
-  array(
-    object({
-      id: string(),
-      user: nullable(string()),
-      slack_user: SlackUserStruct,
-    })
-  )
-)
+const ShortcutUserStructSingle: Describe<NonNullable<WRShortcutUser>[0]> = object({
+  id: string(),
+  user: nullable(string()),
+  slack_user: SlackUserStruct,
+})
+
+const ShortcutUserStruct: Describe<WRShortcutUser> = nullable(array(ShortcutUserStructSingle))
 
 export const WorkspaceResStruct: Describe<WorkspaceRes[]> = array(
   object({
@@ -48,9 +56,21 @@ export const ChangesStruct = type({
   text: optional(string()),
 })
 
-export const ActionStruct = type({
+export const ActionStruct: Describe<Action> = type({
   id: number(),
   entity_type: string(),
+  action: string(),
+  name: optional(string()),
+  mention_ids: optional(array(string())),
+  changes: optional(ChangesStruct),
+  author_id: optional(string()),
+  app_url: optional(string()),
+  text: optional(string()),
+})
+
+export const StoryActionStruct: Describe<Action<"story-comment">> = type({
+  id: number(),
+  entity_type: literal("story-comment"),
   action: string(),
   name: optional(string()),
   mention_ids: optional(array(string())),
@@ -78,7 +98,7 @@ export const ShortcutWebhookBodyStruct: Describe<ShortcutWebhookBody> = type({
 
 export const isShortcutWebhookBody = (data: unknown): data is ShortcutWebhookBody => ShortcutWebhookBodyStruct.is(data)
 
-export const DisplayIconStruct = object({
+export const DisplayIconStruct = type({
   created_at: string(),
   entity_type: string(),
   id: string(),
@@ -86,9 +106,9 @@ export const DisplayIconStruct = object({
   url: string(),
 })
 
-export const ProfileStruct = object({
+export const ProfileStruct = type({
   deactivated: boolean(),
-  display_icon: DisplayIconStruct,
+  display_icon: nullable(DisplayIconStruct),
   email_address: string(),
   entity_type: string(),
   gravatar_hash: string(),
@@ -99,7 +119,7 @@ export const ProfileStruct = object({
   two_factor_auth_activated: boolean(),
 })
 
-export const ShortcutMemberStruct = object({
+export const ShortcutMemberStruct = type({
   created_at: string(),
   disabled: boolean(),
   entity_type: string(),
@@ -113,3 +133,24 @@ export const ShortcutMemberStruct = object({
 
 export const isShortcutMember = (data: unknown): data is ShortcutMember => ShortcutMemberStruct.is(data)
 export const isShortcutMemberArray = (data: unknown): data is ShortcutMember[] => array(ShortcutMemberStruct).is(data)
+
+export const MentionStruct: Describe<Mention> = type({
+  id: string(),
+  name: string(),
+  text: string(),
+  appUrl: string(),
+  authorId: string(),
+  workspace: object({
+    id: string(),
+    name: string(),
+  }),
+  slackUser: SlackUserStruct,
+  shortcutUser: ShortcutUserStructSingle,
+  author: string(),
+})
+
+export const OpenAIMessageStruct: Describe<ChatCompletionRequestMessage> = type({
+  role: enums(["user", "system", "assistant"]),
+  content: string(),
+  name: optional(string()),
+})

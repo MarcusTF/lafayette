@@ -1,6 +1,7 @@
 import { FC, PropsWithChildren, useContext } from "react"
-import { Context } from "../context"
-import { Outlet, Navigate } from "react-router-dom"
+import { Navigate, Outlet } from "react-router-dom"
+
+import { Context } from "context/context"
 
 type Props = {
   inverse?: boolean

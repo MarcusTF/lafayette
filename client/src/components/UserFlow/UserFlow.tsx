@@ -1,6 +1,6 @@
 import { FC } from "react"
 
-import { AllSet, AlreadySet, Confirm, Found, NotFound, WrongGuess, DashboardTypes } from "pages"
+import { AllSet, AlreadySet, Confirm, DashboardTypes, Found, NotFound, WrongGuess } from "pages"
 import Error from "pages/Error/Error"
 
 type Props = {
@@ -21,8 +21,6 @@ const flowSwitch = (route: DashboardTypes.UserFlowRoutes) => {
       return <NotFound />
     case "wrongGuess":
       return <WrongGuess />
-    case "notFound":
-      return <NotFound />
     case "error":
       return <Error />
     default:

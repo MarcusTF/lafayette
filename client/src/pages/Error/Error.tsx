@@ -1,5 +1,4 @@
 import { PuppyError } from "assets"
-
 import "./Error.scss"
 
 const Error = () => {

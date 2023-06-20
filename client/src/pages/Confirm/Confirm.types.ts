@@ -1,9 +1,9 @@
 import { MutationFunction } from "@tanstack/react-query"
 
 export type SetupSyncVariables = {
-  shortcutId: string
-  slackId: string
-  userId: string
+  slackId: string | undefined
+  shortcutIds: [string | undefined, string | undefined][] | undefined
+  id: string | undefined
 }
 
-export type SetupSyncMutation = MutationFunction<null, SetupSyncVariables>
+export type SetupSyncMutation = MutationFunction<void, SetupSyncVariables>

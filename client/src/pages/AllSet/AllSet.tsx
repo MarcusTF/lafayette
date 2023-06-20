@@ -1,15 +1,12 @@
 import { useState } from "react"
-import ReactModal from "react-modal"
 
-export { default as AllSet } from "./AllSet"
 import { useUndoSync } from "utilities/hooks"
+import { ConfirmModal } from "utilities/modals"
 
 import { Lafayette } from "assets"
 import "./AllSet.scss"
 
-type Props = {}
-
-const AllSet = (props: Props) => {
+const AllSet = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const { mutate: undoSync } = useUndoSync({
     onSuccess: () => {
@@ -34,26 +31,7 @@ const AllSet = (props: Props) => {
           </button>
         </div>
       </main>
-      <ReactModal
-        onRequestClose={() => setIsOpen(v => !v)}
-        isOpen={isOpen}
-        className='modal modal--confirm'
-        overlayClassName='modal__overlay modal__overlay--confirm'
-      >
-        <h1 className='modal__title'>Are you sure?</h1>
-        <p className='modal__subtitle'>
-          You'll stop getting messages from me whenever someone mentions you in shortcut. You can always change your
-          mind later.
-        </p>
-        <div className='actions'>
-          <button className='button button--undo button--confirm' onClick={() => undoSync()}>
-            Yes, I'm sure.
-          </button>
-          <button className='button button--undo button--wrong' onClick={() => setIsOpen(v => !v)}>
-            No, I want messages.
-          </button>
-        </div>
-      </ReactModal>
+      <ConfirmModal isOpen={isOpen} setIsOpen={setIsOpen} undoSync={undoSync} />
     </div>
   )
 }

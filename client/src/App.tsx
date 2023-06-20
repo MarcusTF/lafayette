@@ -1,14 +1,20 @@
-import { Route, Routes } from "react-router-dom"
 import Modal from "react-modal"
+import { Route, Routes } from "react-router-dom"
+import { ToastContainer } from "react-toastify"
 
-import Dashboard from "./pages/Dashboard/Dashboard"
-import Login from "./pages/Login/Login"
-import PrivateRoute from "./utilities/PrivateRoute"
-import { useGetSession, useWatchAuthChanges } from "./utilities/hooks"
+import { Chat, Dashboard, Login } from "pages"
+import { useGetSession, useWatchAuthChanges } from "utilities/hooks"
+import PrivateRoute from "utilities/PrivateRoute"
+import { getDomainParts } from "utilities/utils"
 
 import "./App.scss"
+import "react-toastify/dist/ReactToastify.css"
 
 Modal.setAppElement("#root")
+
+const {
+  subdomains: [subdomain],
+} = getDomainParts()
 
 function App() {
   useGetSession()
@@ -16,14 +22,26 @@ function App() {
 
   return (
     <div className='App'>
-      <Routes>
-        <Route path='/login' element={<PrivateRoute inverse />}>
-          <Route path='' element={<Login />} />
-        </Route>
-        <Route path='/' element={<PrivateRoute />}>
-          <Route path='' element={<Dashboard />} />
-        </Route>
-      </Routes>
+      {subdomain === "chat" ? (
+        <Routes>
+          <Route path='/login' element={<PrivateRoute inverse />}>
+            <Route path='' element={<Login mode={"chatbot"} />} />
+          </Route>
+          <Route path='/' element={<PrivateRoute />}>
+            <Route path='' element={<Chat />} />
+          </Route>
+        </Routes>
+      ) : (
+        <Routes>
+          <Route path='/login' element={<PrivateRoute inverse />}>
+            <Route path='' element={<Login mode={"main"} />} />
+          </Route>
+          <Route path='/' element={<PrivateRoute />}>
+            <Route path='' element={<Dashboard />} />
+          </Route>
+        </Routes>
+      )}
+      <ToastContainer />
     </div>
   )
 }

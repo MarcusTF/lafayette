@@ -1,15 +1,17 @@
 import { createContext, useState } from "react"
 
-import {
+import { Header, Loader, UserFlow } from "components"
+import { ShortcutResponseStruct } from "utilities/guards"
+import { useGetShortcutIds, useGetSlackUserSupabase } from "utilities/hooks"
+import { errorToast } from "utilities/toasts"
+
+import type {
   LoadingDispatchSetState,
   UserFlowContextType,
   UserFlowDispatchSetState,
   UserFlowRoutes,
 } from "./Dashboard.types"
-import { Loader, SlackIcon, UserFlow } from "components"
-import { useGetShortcutIds, useGetSlackUserSupabase, useMainContext } from "utilities/hooks"
 
-import { SlackIcon as SlackLogo } from "assets"
 import "./Dashboard.scss"
 
 export const UserFlowContext = createContext<UserFlowContextType>({
@@ -24,8 +26,6 @@ const Dashboard = () => {
   const [route, setRoute] = useState<UserFlowRoutes>("")
   const [loading, setLoading] = useState<boolean>(false)
 
-  const { user } = useMainContext()
-
   const supabaseSlack = useGetSlackUserSupabase({
     onSuccess: data => {
       if (data?.active) setRoute("alreadySet")
@@ -34,8 +34,8 @@ const Dashboard = () => {
       if (error && typeof error === "object" && "code" in error && error.code === "PGRST116") return false
       return failureCount < 3
     },
-    onError: error => {
-      console.error("error", error)
+    onError: () => {
+      errorToast("Uh oh! Something went wrong fetching data from the server.", "supabaseSlack.error")
     },
     refetchOnMount: false,
     refetchOnReconnect: false,
@@ -44,32 +44,37 @@ const Dashboard = () => {
 
   const shortcut = useGetShortcutIds({
     enabled:
-      (supabaseSlack.isSuccess && !supabaseSlack?.data?.active && !supabaseSlack.isLoading) || supabaseSlack.isError,
+      (supabaseSlack?.isSuccess && !supabaseSlack?.data?.active && !supabaseSlack.isLoading) || supabaseSlack?.isError,
     onSuccess: data => {
-      if (Object.values(data.bestGuess).every(v => v === "")) setRoute("notFound")
+      if (!ShortcutResponseStruct.is(data)) {
+        errorToast("The server returned an unexpected response.", "error.server")
+        setRoute("error")
+        try {
+          ShortcutResponseStruct.assert(data)
+        } catch (e) {
+          console.error(e)
+        }
+      }
+      if (
+        data.every(
+          ({ bestGuess }) =>
+            !bestGuess?.profile?.mention_name || !bestGuess?.profile?.email_address || !bestGuess?.profile?.name
+        )
+      )
+        setRoute("notFound")
       else setRoute("found")
     },
   })
 
   const error = shortcut.error
 
-  const avatar = user?.identities?.[0].identity_data?.avatar_url
   return (
     <div className='dashboard'>
-      <header className='dashboard__header'>
-        <div className='avatar-wrapper'>
-          <img src={avatar || SlackLogo} alt='User Avatar' className='user__avatar' />
-          {avatar && <SlackIcon />}
-        </div>
-        <div className='user'>
-          <p className='user__name'>{user?.identities?.[0]?.identity_data?.name}</p>
-          <p className='user__email'>{user?.identities?.[0]?.identity_data?.email}</p>
-        </div>
-      </header>
+      <Header />
       <main className='dashboard__main'>
         <Loader
           text='Fetching...'
-          loading={supabaseSlack.isLoading || (shortcut.fetchStatus !== "idle" && shortcut.isLoading) || loading}
+          loading={supabaseSlack?.isLoading || (shortcut.fetchStatus !== "idle" && shortcut.isLoading) || loading}
         >
           <UserFlowContext.Provider value={{ route, setRoute, shortcut, loading, setLoading }}>
             <UserFlow route={error ? "error" : route} />

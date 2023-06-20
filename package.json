@@ -20,11 +20,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "concurrently": "^8.0.1",
-    "react-modal": "^3.16.1"
+    "concurrently": "^8.0.1"
   },
   "devDependencies": {
-    "@types/node": "^18.15.11",
-    "@types/react-modal": "^3.13.1"
+    "@types/node": "^18.15.11"
   }
 }
