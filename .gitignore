@@ -27,11 +27,6 @@ dockercompose.yml
 *.njsproj
 *.sln
 *.sw?
-
-*.env
-/supabase
-
-client/build
-server/dist
-client/build/*
-server/dist/*
+.env
+supabase
+*/build
