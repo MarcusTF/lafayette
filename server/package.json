@@ -28,7 +28,7 @@
     "express-rate-limit": "^6.7.0",
     "gpt3-tokenizer": "^1.1.5",
     "helmet": "^7.0.0",
-    "immer": "^10.0.0",
+    "immer": "^10.0.2",
     "morgan": "^1.10.0",
     "openai": "^3.2.1",
     "superstruct": "^1.0.3",
