@@ -33,7 +33,7 @@
     "react-syntax-highlighter": "^15.5.0",
     "react-toastify": "^9.1.2",
     "react": "^18.2.0",
-    "sass": "^1.60.0",
+    "sass": "^1.79.0",
     "sse.js": "^0.6.1",
     "superstruct": "^1.0.3",
     "typescript": "^5.0.3",
