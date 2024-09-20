@@ -37,7 +37,7 @@
     "sse.js": "^0.6.1",
     "superstruct": "^1.0.3",
     "typescript": "^5.0.3",
-    "use-immer": "^0.9.0",
+    "use-immer": "^0.10.0",
     "vite-tsconfig-paths": "^4.0.7",
     "vite": "^4.2.1"
   },
