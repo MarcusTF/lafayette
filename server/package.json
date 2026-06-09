@@ -30,7 +30,7 @@
     "helmet": "^7.0.0",
     "immer": "^10.0.0",
     "morgan": "^1.10.0",
-    "openai": "^3.2.1",
+    "openai": "^4.0.0",
     "superstruct": "^1.0.3",
     "swagger-ui-express": "^4.6.2",
     "tsoa": "^5.1.1",
