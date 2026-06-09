@@ -29,7 +29,7 @@
     "react-final-form": "^6.5.9",
     "react-markdown": "^8.0.7",
     "react-modal": "^3.16.1",
-    "react-router-dom": "^6.10.0",
+    "react-router-dom": "^6.30.3",
     "react-syntax-highlighter": "^15.5.0",
     "react-toastify": "^9.1.2",
     "react": "^18.2.0",
