@@ -30,7 +30,7 @@
     "react-markdown": "^8.0.7",
     "react-modal": "^3.16.1",
     "react-router-dom": "^6.10.0",
-    "react-syntax-highlighter": "^15.5.0",
+    "react-syntax-highlighter": "^16.0.0",
     "react-toastify": "^9.1.2",
     "react": "^18.2.0",
     "sass": "^1.60.0",
@@ -39,7 +39,7 @@
     "typescript": "^5.0.3",
     "use-immer": "^0.11.0",
     "vite-tsconfig-paths": "^4.0.7",
-    "vite": "^4.2.1"
+    "vite": "^5.4.21"
   },
   "devDependencies": {
     "@types/color": "^3.0.3",
