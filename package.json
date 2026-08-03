@@ -20,7 +20,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "concurrently": "^8.0.1"
+    "concurrently": "^9.0.0"
   },
   "devDependencies": {
     "@types/node": "^18.15.11"
