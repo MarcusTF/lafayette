@@ -34,7 +34,7 @@
     "react-toastify": "^9.1.2",
     "react": "^18.2.0",
     "sass": "^1.60.0",
-    "sse.js": "^0.6.1",
+    "sse.js": "^2.0.0",
     "superstruct": "^1.0.3",
     "typescript": "^5.0.3",
     "use-immer": "^0.11.0",
